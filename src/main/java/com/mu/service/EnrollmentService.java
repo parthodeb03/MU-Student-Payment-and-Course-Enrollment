@@ -12,7 +12,7 @@ public class EnrollmentService {
 
     public EnrollmentService() {
 
-        enrollmentDAO = new EnrollmentDAO();
+        enrollmentDAO = com.mu.factory.DAOFactory.createEnrollmentDAO();
         notificationService = new NotificationService();
 
     }

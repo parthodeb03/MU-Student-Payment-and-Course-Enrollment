@@ -8,7 +8,7 @@ public class LoginService {
     private final StudentDAO studentDAO;
 
     public LoginService() {
-        studentDAO = new StudentDAO();
+        studentDAO = com.mu.factory.DAOFactory.createStudentDAO();
     }
 
     public Student login(String email, String password) {

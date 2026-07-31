@@ -1,0 +1,7 @@
+C:\Users\DUBAI LAPTOP BAZAR\Downloads\MU-Student-Payment-and-Course-Enrollment\src\test\java\com\mu\pattern\DBConnectionSingletonTest.java
+C:\Users\DUBAI LAPTOP BAZAR\Downloads\MU-Student-Payment-and-Course-Enrollment\src\test\java\com\mu\pattern\NotificationServiceTest.java
+C:\Users\DUBAI LAPTOP BAZAR\Downloads\MU-Student-Payment-and-Course-Enrollment\src\test\java\com\mu\pattern\PaymentStrategyTest.java
+C:\Users\DUBAI LAPTOP BAZAR\Downloads\MU-Student-Payment-and-Course-Enrollment\src\test\java\com\mu\service\AdminServiceTest.java
+C:\Users\DUBAI LAPTOP BAZAR\Downloads\MU-Student-Payment-and-Course-Enrollment\src\test\java\com\mu\service\PaymentServiceTest.java
+C:\Users\DUBAI LAPTOP BAZAR\Downloads\MU-Student-Payment-and-Course-Enrollment\src\test\java\com\mu\service\RegistrationServiceTest.java
+C:\Users\DUBAI LAPTOP BAZAR\Downloads\MU-Student-Payment-and-Course-Enrollment\src\test\java\com\mu\util\InputValidatorTest.java

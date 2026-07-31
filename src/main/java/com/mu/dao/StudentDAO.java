@@ -8,19 +8,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class StudentDAO {
-
-    private final Connection connection;
-
-    public StudentDAO() {
-        connection = DBConnection.getInstance().getConnection();
-    }
-
-    // Register Student
+// Register Student
     public boolean register(Student student) {
 
         String sql = "INSERT INTO students(name,email,password) VALUES(?,?,?)";
 
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+        try (PreparedStatement ps = DBConnection.getInstance().getConnection().prepareStatement(sql)) {
 
             ps.setString(1, student.getName());
             ps.setString(2, student.getEmail());
@@ -40,7 +33,7 @@ public class StudentDAO {
 
         String sql = "SELECT * FROM students WHERE email=? AND password=?";
 
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+        try (PreparedStatement ps = DBConnection.getInstance().getConnection().prepareStatement(sql)) {
 
             ps.setString(1, email);
             ps.setString(2, password);
@@ -73,7 +66,7 @@ public class StudentDAO {
 
         String sql = "SELECT * FROM students";
 
-        try (PreparedStatement ps = connection.prepareStatement(sql);
+        try (PreparedStatement ps = DBConnection.getInstance().getConnection().prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {

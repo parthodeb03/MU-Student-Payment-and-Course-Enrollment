@@ -12,7 +12,12 @@ public class AdminService {
     private AdminDAO adminDAO;
 
     public AdminService() {
-        adminDAO = new AdminDAO();
+        adminDAO = com.mu.factory.DAOFactory.createAdminDAO();
+    }
+
+    // Constructor injection — used by tests via Mockito @InjectMocks
+    public AdminService(AdminDAO adminDAO) {
+        this.adminDAO = adminDAO;
     }
 
     // -----------------------------
@@ -46,6 +51,14 @@ public class AdminService {
 
         if (admin.getPassword() == null || admin.getPassword().trim().isEmpty()) {
             throw new IllegalArgumentException("Password cannot be empty.");
+        }
+
+        if (admin.getPassword().trim().length() < 4) {
+            throw new IllegalArgumentException("Password must contain at least 4 characters.");
+        }
+
+        if (adminDAO.existsByUsername(admin.getUsername().trim())) {
+            throw new IllegalArgumentException("Username is already taken.");
         }
 
         return adminDAO.register(admin);

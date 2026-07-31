@@ -8,14 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EnrollmentDAO {
-
-    private final Connection connection;
-
-    public EnrollmentDAO() {
-        connection = DBConnection.getInstance().getConnection();
-    }
-
-    // Enroll Student in a Course
+// Enroll Student in a Course
     public boolean enrollCourse(int studentId, int courseId) {
 
         if (isAlreadyEnrolled(studentId, courseId)) {
@@ -28,7 +21,7 @@ public class EnrollmentDAO {
 
         String sql = "INSERT INTO enrollments(student_id, course_id) VALUES(?, ?)";
 
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+        try (PreparedStatement ps = DBConnection.getInstance().getConnection().prepareStatement(sql)) {
 
             ps.setInt(1, studentId);
             ps.setInt(2, courseId);
@@ -47,7 +40,7 @@ public class EnrollmentDAO {
 
         String sql = "SELECT * FROM enrollments WHERE student_id=? AND course_id=?";
 
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+        try (PreparedStatement ps = DBConnection.getInstance().getConnection().prepareStatement(sql)) {
 
             ps.setInt(1, studentId);
             ps.setInt(2, courseId);
@@ -68,7 +61,7 @@ public class EnrollmentDAO {
 
         String sql = "SELECT COUNT(*) FROM enrollments WHERE student_id=?";
 
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+        try (PreparedStatement ps = DBConnection.getInstance().getConnection().prepareStatement(sql)) {
 
             ps.setInt(1, studentId);
 
@@ -101,7 +94,7 @@ public class EnrollmentDAO {
                 ORDER BY c.course_name
                 """;
 
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+        try (PreparedStatement ps = DBConnection.getInstance().getConnection().prepareStatement(sql)) {
 
             ps.setInt(1, studentId);
 
@@ -130,7 +123,7 @@ public class EnrollmentDAO {
         String sql =
                 "DELETE FROM enrollments WHERE student_id=? AND course_id=?";
 
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+        try (PreparedStatement ps = DBConnection.getInstance().getConnection().prepareStatement(sql)) {
 
             ps.setInt(1, studentId);
             ps.setInt(2, courseId);

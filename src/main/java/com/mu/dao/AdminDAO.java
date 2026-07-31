@@ -17,9 +17,9 @@ public class AdminDAO {
     public Admin login(String username, String password) {
 
         String sql = "SELECT * FROM admin WHERE username=? AND password=?";
+        Connection con = DBConnection.getInstance().getConnection();
 
-        try (Connection con = DBConnection.getInstance().getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setString(1, username);
             ps.setString(2, password);
@@ -43,14 +43,36 @@ public class AdminDAO {
     }
 
     // -------------------------
+    // Check Username Existence
+    // -------------------------
+    public boolean existsByUsername(String username) {
+
+        String sql = "SELECT 1 FROM admin WHERE username=?";
+        Connection con = DBConnection.getInstance().getConnection();
+
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setString(1, username);
+            ResultSet rs = ps.executeQuery();
+
+            return rs.next();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+    // -------------------------
     // Admin Registration
     // -------------------------
     public boolean register(Admin admin) {
 
         String sql = "INSERT INTO admin(username,password) VALUES(?,?)";
+        Connection con = DBConnection.getInstance().getConnection();
 
-        try (Connection con = DBConnection.getInstance().getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setString(1, admin.getUsername());
             ps.setString(2, admin.getPassword());
@@ -72,9 +94,9 @@ public class AdminDAO {
     public int getTotalStudents() {
 
         String sql = "SELECT COUNT(*) FROM students";
+        Connection con = DBConnection.getInstance().getConnection();
 
-        try (Connection con = DBConnection.getInstance().getConnection();
-             Statement st = con.createStatement()) {
+        try (Statement st = con.createStatement()) {
 
             ResultSet rs = st.executeQuery(sql);
 
@@ -95,9 +117,9 @@ public class AdminDAO {
     public double getTotalPayments() {
 
         String sql = "SELECT SUM(amount) FROM payments";
+        Connection con = DBConnection.getInstance().getConnection();
 
-        try (Connection con = DBConnection.getInstance().getConnection();
-             Statement st = con.createStatement()) {
+        try (Statement st = con.createStatement()) {
 
             ResultSet rs = st.executeQuery(sql);
 
@@ -120,9 +142,9 @@ public class AdminDAO {
         List<Student> list = new ArrayList<>();
 
         String sql = "SELECT * FROM students";
+        Connection con = DBConnection.getInstance().getConnection();
 
-        try (Connection con = DBConnection.getInstance().getConnection();
-             Statement st = con.createStatement()) {
+        try (Statement st = con.createStatement()) {
 
             ResultSet rs = st.executeQuery(sql);
 
@@ -153,9 +175,9 @@ public class AdminDAO {
         List<Payment> list = new ArrayList<>();
 
         String sql = "SELECT * FROM payments";
+        Connection con = DBConnection.getInstance().getConnection();
 
-        try (Connection con = DBConnection.getInstance().getConnection();
-             Statement st = con.createStatement()) {
+        try (Statement st = con.createStatement()) {
 
             ResultSet rs = st.executeQuery(sql);
 
@@ -180,4 +202,4 @@ public class AdminDAO {
         return list;
     }
 
-}
+}

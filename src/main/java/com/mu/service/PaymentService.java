@@ -15,10 +15,13 @@ public class PaymentService {
     private final NotificationService notificationService;
 
     public PaymentService() {
-
-        paymentDAO = new PaymentDAO();
+        paymentDAO = com.mu.factory.DAOFactory.createPaymentDAO();
         notificationService = new NotificationService();
+    }
 
+    public PaymentService(PaymentDAO paymentDAO) {
+        this.paymentDAO = paymentDAO;
+        this.notificationService = new NotificationService();
     }
 
     public boolean makePayment(int studentId,

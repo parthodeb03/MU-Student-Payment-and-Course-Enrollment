@@ -8,19 +8,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CourseDAO {
-
-    private final Connection connection;
-
-    public CourseDAO() {
-        connection = DBConnection.getInstance().getConnection();
-    }
-
-    // Add Course
+// Add Course
     public boolean addCourse(Course course) {
 
         String sql = "INSERT INTO courses(course_name, credit) VALUES(?, ?)";
 
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+        try (PreparedStatement ps = DBConnection.getInstance().getConnection().prepareStatement(sql)) {
 
             ps.setString(1, course.getCourseName());
             ps.setInt(2, course.getCredit());
@@ -39,7 +32,7 @@ public class CourseDAO {
 
         String sql = "UPDATE courses SET course_name=?, credit=? WHERE course_id=?";
 
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+        try (PreparedStatement ps = DBConnection.getInstance().getConnection().prepareStatement(sql)) {
 
             ps.setString(1, course.getCourseName());
             ps.setInt(2, course.getCredit());
@@ -59,7 +52,7 @@ public class CourseDAO {
 
         String sql = "DELETE FROM courses WHERE course_id=?";
 
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+        try (PreparedStatement ps = DBConnection.getInstance().getConnection().prepareStatement(sql)) {
 
             ps.setInt(1, courseId);
 
@@ -77,7 +70,7 @@ public class CourseDAO {
 
         String sql = "SELECT * FROM courses WHERE course_id=?";
 
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+        try (PreparedStatement ps = DBConnection.getInstance().getConnection().prepareStatement(sql)) {
 
             ps.setInt(1, courseId);
 
@@ -106,7 +99,7 @@ public class CourseDAO {
 
         String sql = "SELECT * FROM courses ORDER BY course_id";
 
-        try (PreparedStatement ps = connection.prepareStatement(sql);
+        try (PreparedStatement ps = DBConnection.getInstance().getConnection().prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {

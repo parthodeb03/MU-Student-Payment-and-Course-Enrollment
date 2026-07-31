@@ -2,6 +2,7 @@ package com.mu.ui;
 
 import com.mu.model.Admin;
 import com.mu.service.AdminService;
+import com.mu.ui.theme.UITheme;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,6 +13,7 @@ public class AdminLoginFrame extends JFrame {
     private JPasswordField txtPassword;
 
     private JButton btnLogin;
+    private JButton btnRegister;
     private JButton btnBack;
 
     private AdminService adminService;
@@ -20,69 +22,74 @@ public class AdminLoginFrame extends JFrame {
 
         adminService = new AdminService();
 
-        setTitle("Admin Login");
-        setSize(400,300);
+        setTitle("Admin Portal");
+        setSize(520, 380);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setLayout(new GridBagLayout());
 
+        JPanel contentPanel = new JPanel(new BorderLayout(16, 16));
+        contentPanel.setBackground(UITheme.BACKGROUND_COLOR);
+        contentPanel.setBorder(BorderFactory.createEmptyBorder(24, 24, 24, 24));
+        setContentPane(contentPanel);
+
+        JLabel lblTitle = UITheme.createLabel("Administrator Login", UITheme.HEADER_FONT, UITheme.PRIMARY_COLOR);
+        JLabel lblSubtitle = UITheme.createLabel("Secure access to university management tools", UITheme.BODY_FONT, UITheme.TEXT_MUTED);
+
+        JPanel header = new JPanel(new GridLayout(2, 1, 0, 6));
+        header.setOpaque(false);
+        header.add(lblTitle);
+        header.add(lblSubtitle);
+
+        JPanel formCard = UITheme.createCardPanel();
+        formCard.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10,10,10,10);
+        gbc.insets = new Insets(12, 12, 12, 12);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.anchor = GridBagConstraints.WEST;
 
-        JLabel lblTitle = new JLabel("Administrator Login");
-        lblTitle.setFont(new Font("Arial",Font.BOLD,20));
-
-        gbc.gridx=0;
-        gbc.gridy=0;
-        gbc.gridwidth=2;
-
-        add(lblTitle,gbc);
-
-        gbc.gridwidth=1;
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridwidth = 2;
+        formCard.add(UITheme.createLabel("Admin Login", UITheme.SUBHEADER_FONT, UITheme.TEXT_DARK), gbc);
 
         gbc.gridy++;
+        gbc.gridwidth = 1;
+        formCard.add(UITheme.createLabel("Username:"), gbc);
+        gbc.gridx = 1;
+        txtUsername = UITheme.createTextField(20);
+        formCard.add(txtUsername, gbc);
 
-        add(new JLabel("Username:"),gbc);
-
-        txtUsername=new JTextField(18);
-
-        gbc.gridx=1;
-
-        add(txtUsername,gbc);
-
-        gbc.gridx=0;
+        gbc.gridx = 0;
         gbc.gridy++;
+        formCard.add(UITheme.createLabel("Password:"), gbc);
+        gbc.gridx = 1;
+        txtPassword = UITheme.createPasswordField(20);
+        formCard.add(txtPassword, gbc);
 
-        add(new JLabel("Password:"),gbc);
-
-        txtPassword=new JPasswordField(18);
-
-        gbc.gridx=1;
-
-        add(txtPassword,gbc);
-
-        btnLogin=new JButton("Login");
-        btnBack=new JButton("Back");
-
-        JPanel panel=new JPanel();
-
-        panel.add(btnLogin);
-        panel.add(btnBack);
-
-        gbc.gridx=0;
+        gbc.gridx = 0;
         gbc.gridy++;
-        gbc.gridwidth=2;
+        gbc.gridwidth = 2;
+        JPanel buttonRow = new JPanel(new GridLayout(1, 3, 12, 0));
+        buttonRow.setOpaque(false);
+        btnLogin = UITheme.createPrimaryButton("Login");
+        btnRegister = UITheme.createOutlineButton("Register");
+        btnBack = UITheme.createOutlineButton("Back");
+        buttonRow.add(btnLogin);
+        buttonRow.add(btnRegister);
+        buttonRow.add(btnBack);
+        formCard.add(buttonRow, gbc);
 
-        add(panel,gbc);
+        contentPanel.add(header, BorderLayout.NORTH);
+        contentPanel.add(formCard, BorderLayout.CENTER);
 
-        btnLogin.addActionListener(e->login());
-
-        btnBack.addActionListener(e->{
-
-            new LoginFrame();
-
+        btnLogin.addActionListener(e -> login());
+        btnRegister.addActionListener(e -> {
+            new AdminRegistrationFrame();
             dispose();
-
+        });
+        btnBack.addActionListener(e -> {
+            new LoginFrame();
+            dispose();
         });
 
         setVisible(true);

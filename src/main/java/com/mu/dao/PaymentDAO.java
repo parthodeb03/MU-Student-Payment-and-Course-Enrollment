@@ -9,14 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PaymentDAO {
-
-    private final Connection connection;
-
-    public PaymentDAO() {
-        connection = DBConnection.getInstance().getConnection();
-    }
-
-    // Make Payment
+// Make Payment
     public boolean makePayment(Payment payment) {
 
         String sql = """
@@ -25,7 +18,7 @@ public class PaymentDAO {
                 VALUES (?, ?, ?, ?)
                 """;
 
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+        try (PreparedStatement ps = DBConnection.getInstance().getConnection().prepareStatement(sql)) {
 
             ps.setInt(1, payment.getStudentId());
             ps.setDouble(2, payment.getAmount());
@@ -53,7 +46,7 @@ public class PaymentDAO {
                 ORDER BY payment_date DESC
                 """;
 
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+        try (PreparedStatement ps = DBConnection.getInstance().getConnection().prepareStatement(sql)) {
 
             ps.setInt(1, studentId);
 
@@ -89,7 +82,7 @@ public class PaymentDAO {
                 ORDER BY payment_date DESC
                 """;
 
-        try (PreparedStatement ps = connection.prepareStatement(sql);
+        try (PreparedStatement ps = DBConnection.getInstance().getConnection().prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
@@ -124,7 +117,7 @@ public class PaymentDAO {
         String sql =
                 "SELECT SUM(amount) FROM payments WHERE student_id=?";
 
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+        try (PreparedStatement ps = DBConnection.getInstance().getConnection().prepareStatement(sql)) {
 
             ps.setInt(1, studentId);
 

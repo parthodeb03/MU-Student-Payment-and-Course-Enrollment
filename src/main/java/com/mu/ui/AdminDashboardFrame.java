@@ -1,121 +1,111 @@
 package com.mu.ui;
 
+import com.mu.dao.CourseDAO;
 import com.mu.service.AdminService;
+import com.mu.ui.theme.UITheme;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
 public class AdminDashboardFrame extends JFrame {
-
-    private JLabel lblStudents;
-    private JLabel lblPayments;
 
     private JButton btnCourse;
     private JButton btnStudents;
     private JButton btnPayments;
     private JButton btnLogout;
 
-    private AdminService adminService;
+    private final AdminService adminService;
+    private final CourseDAO courseDAO;
 
     public AdminDashboardFrame() {
-
         adminService = new AdminService();
+        courseDAO = com.mu.factory.DAOFactory.createCourseDAO();
 
-        setTitle("Admin Dashboard");
-        setSize(550, 450);
+        setTitle("Metropolitan University - Admin Dashboard");
+        setSize(750, 500);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setLayout(new BorderLayout());
 
-        JLabel title = new JLabel(
-                "Metropolitan University Admin Dashboard",
-                SwingConstants.CENTER
-        );
+        JPanel mainPanel = new JPanel(new BorderLayout(15, 15));
+        mainPanel.setBackground(UITheme.BACKGROUND_COLOR);
+        mainPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
+        setContentPane(mainPanel);
 
-        title.setFont(new Font("Arial", Font.BOLD, 20));
+        // Header Panel
+        JPanel headerPanel = UITheme.createCardPanel();
+        headerPanel.setLayout(new BorderLayout());
 
-        add(title, BorderLayout.NORTH);
+        JLabel title = new JLabel("Administrator Dashboard");
+        title.setFont(UITheme.TITLE_FONT);
+        title.setForeground(UITheme.PRIMARY_COLOR);
 
-        JPanel centerPanel = new JPanel(new GridLayout(2, 1));
+        JLabel subtitle = new JLabel("System Overview & Management Controls");
+        subtitle.setFont(UITheme.SUBHEADER_FONT);
+        subtitle.setForeground(UITheme.TEXT_MUTED);
 
-        lblStudents = new JLabel();
-        lblPayments = new JLabel();
+        headerPanel.add(title, BorderLayout.NORTH);
+        headerPanel.add(subtitle, BorderLayout.SOUTH);
 
-        lblStudents.setHorizontalAlignment(SwingConstants.CENTER);
-        lblPayments.setHorizontalAlignment(SwingConstants.CENTER);
+        mainPanel.add(headerPanel, BorderLayout.NORTH);
 
-        lblStudents.setFont(new Font("Arial", Font.BOLD, 16));
-        lblPayments.setFont(new Font("Arial", Font.BOLD, 16));
+        // Stats Cards Panel
+        int totalStudents = adminService.getTotalStudents();
+        double totalPayments = adminService.getTotalPayments();
+        int totalCourses = courseDAO.getAllCourses().size();
 
-        centerPanel.add(lblStudents);
-        centerPanel.add(lblPayments);
+        JPanel statsPanel = new JPanel(new GridLayout(1, 3, 12, 0));
+        statsPanel.setBackground(UITheme.BACKGROUND_COLOR);
 
-        add(centerPanel, BorderLayout.CENTER);
+        statsPanel.add(UITheme.createStatCard("Total Students", String.valueOf(totalStudents), UITheme.PRIMARY_COLOR));
+        statsPanel.add(UITheme.createStatCard("Total Revenue", "$" + String.format("%.2f", totalPayments), UITheme.SUCCESS_COLOR));
+        statsPanel.add(UITheme.createStatCard("Active Courses", String.valueOf(totalCourses), UITheme.SECONDARY_COLOR));
 
-        JPanel buttonPanel = new JPanel(new GridLayout(2,2,10,10));
+        // Controls Panel
+        JPanel buttonPanel = new JPanel(new GridLayout(2, 2, 12, 12));
+        buttonPanel.setBackground(UITheme.BACKGROUND_COLOR);
 
-        btnCourse = new JButton("Manage Courses");
-        btnStudents = new JButton("View Students");
-        btnPayments = new JButton("View Payments");
-        btnLogout = new JButton("Logout");
+        btnCourse = UITheme.createPrimaryButton("Manage Courses");
+        btnStudents = UITheme.createSecondaryButton("View Registered Students");
+        btnPayments = UITheme.createSecondaryButton("View All Payments");
+        btnLogout = UITheme.createDangerButton("Logout");
 
         buttonPanel.add(btnCourse);
         buttonPanel.add(btnStudents);
         buttonPanel.add(btnPayments);
         buttonPanel.add(btnLogout);
 
-        add(buttonPanel, BorderLayout.SOUTH);
+        JPanel centerPanel = new JPanel(new BorderLayout(15, 15));
+        centerPanel.setBackground(UITheme.BACKGROUND_COLOR);
+        centerPanel.add(statsPanel, BorderLayout.NORTH);
+        centerPanel.add(buttonPanel, BorderLayout.CENTER);
 
-        loadDashboard();
+        mainPanel.add(centerPanel, BorderLayout.CENTER);
 
+        // Actions
         btnCourse.addActionListener(e -> {
-
             new CourseManagementFrame();
-
             dispose();
-
         });
 
         btnStudents.addActionListener(e -> {
-
             new ViewStudentsFrame();
-
             dispose();
-
         });
 
         btnPayments.addActionListener(e -> {
-
             new ViewPaymentsFrame();
-
             dispose();
-
         });
 
         btnLogout.addActionListener(e -> {
-
-            new LoginFrame();
-
-            dispose();
-
+            int confirm = JOptionPane.showConfirmDialog(this, "Do you want to logout?", "Logout", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+            if (confirm == JOptionPane.YES_OPTION) {
+                new LoginFrame();
+                dispose();
+            }
         });
 
         setVisible(true);
-
     }
-
-    private void loadDashboard() {
-
-        lblStudents.setText(
-                "Total Students : " +
-                        adminService.getTotalStudents()
-        );
-
-        lblPayments.setText(
-                "Total Payment : " +
-                        adminService.getTotalPayments()
-        );
-
-    }
-
 }
