@@ -19,16 +19,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-/**
- * PaymentServiceTest â€“ White-box tests for PaymentService.
- *
- * DESIGN PATTERNS TESTED:
- *   - Strategy Pattern : PaymentFactory chooses the correct payment strategy
- *   - Observer Pattern : NotificationService.notifyObservers() is called on success
- *
- * WHY Mockito for PaymentDAO: avoids real DB connections in unit tests.
- * WHEN assertThrows: used to test guard-clause validations.
- */
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class PaymentServiceTest {
 
@@ -42,13 +32,13 @@ class PaymentServiceTest {
 
     @BeforeAll
     static void suiteSetup() {
-System.setProperty("net.bytebuddy.experimental", "true");
+        System.setProperty("net.bytebuddy.experimental", "true");
         System.out.println("=== PaymentServiceTest starting ===");
     }
 
     @AfterAll
     static void suiteTeardown() {
-System.setProperty("net.bytebuddy.experimental", "true");
+        System.setProperty("net.bytebuddy.experimental", "true");
         System.out.println("=== PaymentServiceTest finished ===");
     }
 
@@ -61,10 +51,6 @@ System.setProperty("net.bytebuddy.experimental", "true");
     void close() throws Exception {
         mocks.close();
     }
-
-    // ---------------------------------------------------------------
-    // Guard clause tests â€” assertThrows
-    // ---------------------------------------------------------------
 
     @Test
     @Order(1)
@@ -101,10 +87,6 @@ System.setProperty("net.bytebuddy.experimental", "true");
                 () -> paymentService.makePayment(1, 500.0, "bitcoin"));
     }
 
-    // ---------------------------------------------------------------
-    // Parameterized â€” valid payment methods should NOT throw
-    // ---------------------------------------------------------------
-
     @ParameterizedTest(name = "method [{0}] should be accepted")
     @ValueSource(strings = {"cash", "bkash", "card", "CASH", "BKASH", "CARD"})
     @Order(6)
@@ -116,10 +98,6 @@ System.setProperty("net.bytebuddy.experimental", "true");
         } catch (Exception ignored) {
         }
     }
-
-    // ---------------------------------------------------------------
-    // Payment model tests
-    // ---------------------------------------------------------------
 
     @Test
     @Order(7)
@@ -138,7 +116,6 @@ System.setProperty("net.bytebuddy.experimental", "true");
     void paymentModel_setAmount_updatesField() {
         Payment p = new Payment();
         p.setAmount(2500.0);
-        // Verify the setter actually stores the value (was broken before fix)
         assertEquals(2500.0, p.getAmount(), 0.001);
     }
 
@@ -149,9 +126,6 @@ System.setProperty("net.bytebuddy.experimental", "true");
         assertEquals(0.0, p.getAmount(), 0.001);
     }
 
-    /**
-     * WHY assertArrayEquals: verify multiple payment amounts in a list.
-     */
     @Test
     @Order(10)
     void paymentAmounts_matchExpected() {
@@ -160,9 +134,6 @@ System.setProperty("net.bytebuddy.experimental", "true");
         assertArrayEquals(expectedAmounts, actualAmounts, 0.001);
     }
 
-    /**
-     * WHY assertTimeout: payment processing shouldn't take more than 1s.
-     */
     @Test
     @Order(11)
     void paymentValidation_withinTimeout() {
@@ -172,10 +143,7 @@ System.setProperty("net.bytebuddy.experimental", "true");
         });
     }
 
-    /**
-     * Decision Table â€“ combinations of studentId / amount / method validity.
-     */
-    @ParameterizedTest(name = "id={0}, amount={1}, method={2} â†’ throws={3}")
+    @ParameterizedTest(name = "id={0}, amount={1}, method={2} -> throws={3}")
     @CsvSource({
         "1,    500,  cash,    false",
         "0,    500,  cash,    true",
@@ -196,7 +164,6 @@ System.setProperty("net.bytebuddy.experimental", "true");
             } catch (IllegalArgumentException e) {
                 fail("Should not throw for valid inputs");
             } catch (Exception ignored) {
-                // DB error acceptable
             }
         }
     }
