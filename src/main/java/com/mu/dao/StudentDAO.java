@@ -8,12 +8,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class StudentDAO {
-// Register Student
+
     public boolean register(Student student) {
 
-        String sql = "INSERT INTO students(name,email,password) VALUES(?,?,?)";
+        String sql = "INSERT INTO students(name, email, password) VALUES (?, ?, ?)";
 
-        try (PreparedStatement ps = DBConnection.getInstance().getConnection().prepareStatement(sql)) {
+        try (
+                Connection con = DBConnection.getInstance().getConnection();
+                PreparedStatement ps = con.prepareStatement(sql)
+        ) {
+
+            if (con == null) {
+                return false;
+            }
 
             ps.setString(1, student.getName());
             ps.setString(2, student.getEmail());
@@ -22,52 +29,64 @@ public class StudentDAO {
             return ps.executeUpdate() > 0;
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.err.println("Error registering student: " + e.getMessage());
+            return false;
         }
-
-        return false;
     }
 
-    // Login
     public Student login(String email, String password) {
 
         String sql = "SELECT * FROM students WHERE email=? AND password=?";
 
-        try (PreparedStatement ps = DBConnection.getInstance().getConnection().prepareStatement(sql)) {
+        try (
+                Connection con = DBConnection.getInstance().getConnection();
+                PreparedStatement ps = con.prepareStatement(sql)
+        ) {
+
+            if (con == null) {
+                return null;
+            }
 
             ps.setString(1, email);
             ps.setString(2, password);
 
-            ResultSet rs = ps.executeQuery();
+            try (ResultSet rs = ps.executeQuery()) {
 
-            if (rs.next()) {
+                if (rs.next()) {
 
-                Student student = new Student();
+                    Student student = new Student();
 
-                student.setStudentId(rs.getInt("student_id"));
-                student.setName(rs.getString("name"));
-                student.setEmail(rs.getString("email"));
-                student.setPassword(rs.getString("password"));
+                    student.setStudentId(rs.getInt("student_id"));
+                    student.setName(rs.getString("name"));
+                    student.setEmail(rs.getString("email"));
+                    student.setPassword(rs.getString("password"));
 
-                return student;
+                    return student;
+                }
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.err.println("Login Error: " + e.getMessage());
         }
 
         return null;
     }
 
-    // View All Students
     public List<Student> getAllStudents() {
 
         List<Student> students = new ArrayList<>();
 
         String sql = "SELECT * FROM students";
 
-        try (PreparedStatement ps = DBConnection.getInstance().getConnection().prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+        try (
+                Connection con = DBConnection.getInstance().getConnection();
+                PreparedStatement ps = con.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()
+        ) {
+
+            if (con == null) {
+                return students;
+            }
 
             while (rs.next()) {
 
@@ -77,14 +96,38 @@ public class StudentDAO {
                         rs.getString("email"),
                         rs.getString("password")
                 ));
-
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.err.println("Error loading students: " + e.getMessage());
         }
 
         return students;
     }
 
+    public boolean existsByEmail(String email) {
+
+        String sql = "SELECT 1 FROM students WHERE email=?";
+
+        try (
+                Connection con = DBConnection.getInstance().getConnection();
+                PreparedStatement ps = con.prepareStatement(sql)
+        ) {
+
+            if (con == null) {
+                return false;
+            }
+
+            ps.setString(1, email);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Error checking email: " + e.getMessage());
+        }
+
+        return false;
+    }
 }

@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CourseDAO {
-// Add Course
     public boolean addCourse(Course course) {
 
         String sql = "INSERT INTO courses(course_name, credit) VALUES(?, ?)";
@@ -27,7 +26,6 @@ public class CourseDAO {
         return false;
     }
 
-    // Update Course
     public boolean updateCourse(Course course) {
 
         String sql = "UPDATE courses SET course_name=?, credit=? WHERE course_id=?";
@@ -47,7 +45,6 @@ public class CourseDAO {
         return false;
     }
 
-    // Delete Course
     public boolean deleteCourse(int courseId) {
 
         String sql = "DELETE FROM courses WHERE course_id=?";
@@ -65,7 +62,6 @@ public class CourseDAO {
         return false;
     }
 
-    // Get Course By ID
     public Course getCourseById(int courseId) {
 
         String sql = "SELECT * FROM courses WHERE course_id=?";
@@ -92,7 +88,6 @@ public class CourseDAO {
         return null;
     }
 
-    // View All Courses
     public List<Course> getAllCourses() {
 
         List<Course> courses = new ArrayList<>();

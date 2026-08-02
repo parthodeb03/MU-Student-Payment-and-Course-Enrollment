@@ -8,9 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EnrollmentDAO {
-// Enroll Student in a Course
     public boolean enrollCourse(int studentId, int courseId) {
-
         if (isAlreadyEnrolled(studentId, courseId)) {
             return false;
         }
@@ -34,8 +32,6 @@ public class EnrollmentDAO {
 
         return false;
     }
-
-    // Check Duplicate Enrollment
     public boolean isAlreadyEnrolled(int studentId, int courseId) {
 
         String sql = "SELECT * FROM enrollments WHERE student_id=? AND course_id=?";
@@ -56,7 +52,6 @@ public class EnrollmentDAO {
         return false;
     }
 
-    // Count Student Courses
     public int countEnrolledCourses(int studentId) {
 
         String sql = "SELECT COUNT(*) FROM enrollments WHERE student_id=?";
@@ -77,8 +72,6 @@ public class EnrollmentDAO {
 
         return 0;
     }
-
-    // View Enrolled Courses
     public List<Course> getEnrolledCourses(int studentId) {
 
         List<Course> courses = new ArrayList<>();
@@ -116,8 +109,6 @@ public class EnrollmentDAO {
 
         return courses;
     }
-
-    // Drop Course (Optional)
     public boolean dropCourse(int studentId, int courseId) {
 
         String sql =

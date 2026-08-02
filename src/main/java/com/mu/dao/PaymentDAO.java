@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PaymentDAO {
-// Make Payment
     public boolean makePayment(Payment payment) {
 
         String sql = """
@@ -34,7 +33,6 @@ public class PaymentDAO {
         return false;
     }
 
-    // View Payment History of One Student
     public List<Payment> getPaymentHistory(int studentId) {
 
         List<Payment> payments = new ArrayList<>();
@@ -71,7 +69,6 @@ public class PaymentDAO {
         return payments;
     }
 
-    // View All Payments (Admin)
     public List<Payment> getAllPayments() {
 
         List<Payment> payments = new ArrayList<>();
@@ -104,14 +101,12 @@ public class PaymentDAO {
         return payments;
     }
 
-    // Search Payments by Student
     public List<Payment> searchPaymentsByStudent(int studentId) {
 
         return getPaymentHistory(studentId);
 
     }
 
-    // Total Paid by Student (Optional)
     public double getTotalPaid(int studentId) {
 
         String sql =
