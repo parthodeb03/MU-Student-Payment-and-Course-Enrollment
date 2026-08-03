@@ -2,6 +2,7 @@ package com.mu.service;
 
 import com.mu.dao.StudentDAO;
 import com.mu.model.Student;
+import com.mu.util.InputValidator;
 
 public class LoginService {
 
@@ -21,7 +22,7 @@ public class LoginService {
             throw new IllegalArgumentException("Password cannot be empty.");
         }
 
-        if (!email.matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
+        if (!InputValidator.isValidEmail(email)) {
             throw new IllegalArgumentException("Invalid email format.");
         }
 

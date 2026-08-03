@@ -29,7 +29,6 @@ public class AdminService {
         return adminDAO.login(username, password);
     }
 
-<<<<<<< HEAD
     public boolean register(Admin admin) {
 
         if (admin == null) {
@@ -55,8 +54,6 @@ public class AdminService {
         return adminDAO.register(admin);
     }
 
-=======
->>>>>>> 0811db3 (database changed)
     public int getTotalStudents() {
         return adminDAO.getTotalStudents();
     }

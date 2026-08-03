@@ -26,6 +26,13 @@ public final class InputValidator {
         return password.length() >= 6 && password.length() <= 50;
     }
 
+    public static boolean isValidBatch(String batch) {
+        if (batch == null || batch.trim().isEmpty())
+            return false;
+        String trimmed = batch.trim();
+        return trimmed.length() >= 2 && trimmed.length() <= 30;
+    }
+
     public static boolean isValidUsername(String username) {
         if (username == null || username.trim().isEmpty())
             return false;

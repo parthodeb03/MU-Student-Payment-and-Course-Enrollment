@@ -39,7 +39,7 @@ class RegistrationServiceTest {
     @ValueSource(strings = {"", "  ", "A"})
     @Order(1)
     void register_invalidName_throws(String name) {
-        Student s = new Student(0, name, "valid@mu.edu", "password123");
+        Student s = student(name, "valid@mu.edu", "password123");
         assertThrows(IllegalArgumentException.class, () -> service.register(s));
         verify(mockDAO, never()).register(any(Student.class));
     }
@@ -54,7 +54,7 @@ class RegistrationServiceTest {
     })
     @Order(2)
     void register_combinationsTable(String name, String email, String pass, boolean shouldSucceed) {
-        Student s = new Student(0, name, email, pass);
+        Student s = student(name, email, pass);
 
         if (shouldSucceed) {
             assertDoesNotThrow(() -> service.register(s));
@@ -69,7 +69,7 @@ class RegistrationServiceTest {
     @CsvFileSource(resources = "/valid_students.csv", numLinesToSkip = 1)
     @Order(3)
     void register_csvFileSource_allValid(String name, String email, String password) {
-        Student s = new Student(0, name, email, password);
+        Student s = student(name, email, password);
 
         assertDoesNotThrow(() -> service.register(s));
 
@@ -86,16 +86,16 @@ class RegistrationServiceTest {
 
     static Stream<Student> validStudentProvider() {
         return Stream.of(
-                new Student(0, "Dana Islam", "dana@mu.edu", "dana1234"),
-                new Student(0, "Evan Hossain", "evan@mu.edu", "evan5678"),
-                new Student(0, "Fara Begum", "fara@mu.edu", "fara9012")
+                student("Dana Islam", "dana@mu.edu", "dana1234"),
+                student("Evan Hossain", "evan@mu.edu", "evan5678"),
+                student("Fara Begum", "fara@mu.edu", "fara9012")
         );
     }
 
     @Test
     @Order(5)
     void register_password5Chars_throws() {
-        Student s = new Student(0, "Test User", "test@mu.edu", "12345");
+        Student s = student("Test User", "test@mu.edu", "12345");
 
         assertThrows(IllegalArgumentException.class, () -> service.register(s));
 
@@ -105,7 +105,7 @@ class RegistrationServiceTest {
     @Test
     @Order(6)
     void register_password6Chars_succeeds() {
-        Student s = new Student(0, "Test User", "test@mu.edu", "123456");
+        Student s = student("Test User", "test@mu.edu", "123456");
 
         assertDoesNotThrow(() -> service.register(s));
 
@@ -121,7 +121,7 @@ class RegistrationServiceTest {
     })
     @Order(7)
     void causeEffect_invalidEmail_throwsException(String badEmail) {
-        Student s = new Student(0, "Valid Name", badEmail, "password123");
+        Student s = student("Valid Name", badEmail, "password123");
 
         assertThrows(IllegalArgumentException.class, () -> service.register(s));
 
@@ -131,7 +131,7 @@ class RegistrationServiceTest {
     @Test
     @Order(8)
     void register_success_returnsTrue() {
-        Student s = new Student(0, "Gina Noor", "gina@mu.edu", "ginaspass");
+        Student s = student("Gina Noor", "gina@mu.edu", "ginaspass");
 
         boolean result = service.register(s);
 
@@ -139,5 +139,10 @@ class RegistrationServiceTest {
         assertNotNull(s.getName());
 
         verify(mockDAO).register(s);
+    }
+
+    private static Student student(String name, String email, String password) {
+        return new Student("CSE-2024-001", name, email, password,
+                "CSE", "55", "CSE-2024-001", "01700000000");
     }
 }

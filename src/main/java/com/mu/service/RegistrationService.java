@@ -29,6 +29,10 @@ public class RegistrationService {
             throw new IllegalArgumentException("Invalid email format.");
         }
 
+        if (!InputValidator.isValidBatch(student.getBatch())) {
+            throw new IllegalArgumentException("Batch is required (2 to 30 characters).");
+        }
+
         if (!InputValidator.isValidPassword(student.getPassword())) {
             throw new IllegalArgumentException("Password must contain 6 to 50 characters.");
         }

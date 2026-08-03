@@ -69,8 +69,8 @@ class PaymentStrategyTest {
     void factory_twoCashCalls_notSameReference() {
         PaymentStrategy s1 = PaymentFactory.createPayment("cash");
         PaymentStrategy s2 = PaymentFactory.createPayment("cash");
-        assertNotSame(s1, s2); // Different object references
-        assertEquals(s1.getClass(), s2.getClass()); // But same class
+        assertNotSame(s1, s2); 
+        assertEquals(s1.getClass(), s2.getClass()); 
     }
 
     @Test

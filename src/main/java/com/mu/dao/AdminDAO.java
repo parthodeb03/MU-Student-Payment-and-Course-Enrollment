@@ -33,6 +33,33 @@ public class AdminDAO {
         return null;
     }
 
+    public boolean existsByUsername(String username) {
+        String sql = "SELECT 1 FROM admin WHERE username=?";
+        try (Connection con = DBConnection.getInstance().getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, username);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        } catch (SQLException e) {
+            System.err.println("Error checking admin username: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean register(Admin admin) {
+        String sql = "INSERT INTO admin(username, password) VALUES (?, ?)";
+        try (Connection con = DBConnection.getInstance().getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, admin.getUsername());
+            ps.setString(2, admin.getPassword());
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.err.println("Error registering admin: " + e.getMessage());
+            return false;
+        }
+    }
+
     public int getTotalStudents() {
         String sql = "SELECT COUNT(*) FROM students";
         Connection con = DBConnection.getInstance().getConnection();
