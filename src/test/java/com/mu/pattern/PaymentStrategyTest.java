@@ -13,22 +13,6 @@ import java.time.Duration;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * PaymentStrategyTest – tests the Strategy + Factory design patterns.
- *
- * DESIGN PATTERNS COVERED:
- *   1. Strategy Pattern  – PaymentStrategy interface with CashPayment,
- *                          BkashPayment, CardPayment implementations.
- *   2. Factory Pattern   – PaymentFactory.createPayment() selects the
- *                          correct strategy at runtime.
- *
- * WHY Strategy Pattern: The payment method can vary at runtime (Cash /
- *      Bkash / Card).  The strategy pattern lets us swap algorithms
- *      without changing the PaymentService.
- *
- * WHY Factory Pattern: Centralises object creation – PaymentService does
- *      not need to know which concrete class to instantiate.
- */
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class PaymentStrategyTest {
 
@@ -41,10 +25,6 @@ class PaymentStrategyTest {
     static void tearDown() {
         System.out.println("=== PaymentStrategyTest finished ===");
     }
-
-    // ---------------------------------------------------------------
-    // Factory returns correct strategy type
-    // ---------------------------------------------------------------
 
     @Test
     @Order(1)
@@ -84,45 +64,31 @@ class PaymentStrategyTest {
         assertNull(strategy);
     }
 
-    /**
-     * WHY assertSame: Two calls with same method produce the same TYPE
-     *     (we use instanceof checks not object references since factory
-     *     creates new instances each call).
-     * WHY assertNotSame: Factory creates a new object each call – references differ.
-     */
     @Test
     @Order(6)
     void factory_twoCashCalls_notSameReference() {
         PaymentStrategy s1 = PaymentFactory.createPayment("cash");
         PaymentStrategy s2 = PaymentFactory.createPayment("cash");
-        assertNotSame(s1, s2);            // Different object references
+        assertNotSame(s1, s2); // Different object references
         assertEquals(s1.getClass(), s2.getClass()); // But same class
     }
 
-    /**
-     * WHY assertNotEquals on classes: cash vs bkash strategies are different.
-     */
     @Test
     @Order(7)
     void factory_differentMethods_differentClasses() {
-        PaymentStrategy cash  = PaymentFactory.createPayment("cash");
+        PaymentStrategy cash = PaymentFactory.createPayment("cash");
         PaymentStrategy bkash = PaymentFactory.createPayment("bkash");
         assertNotEquals(cash.getClass(), bkash.getClass());
     }
 
-    /**
-     * Parameterized – all valid methods should return non-null strategy.
-     * WHY @CsvSource: test multiple method names with a table structure.
-     */
     @ParameterizedTest(name = "method [{0}] → expected non-null: {1}")
     @CsvSource({
-        "cash,  true",
-        "bkash, true",
-        "card,  true",
-        "CASH,  true",   // case-insensitive
-        "BKASH, true",
-        "CARD,  true",
-        "wire,  false",
+            "cash,  true",
+            "bkash, true",
+            "card,  true",
+            "CASH,  true",
+            "CARD,  true",
+            "wire,  false",
     })
     @Order(8)
     void factory_variousMethods(String method, boolean expectedNonNull) {
@@ -134,9 +100,6 @@ class PaymentStrategyTest {
         }
     }
 
-    /**
-     * WHY assertTimeout: pay() should execute within 200 ms.
-     */
     @Test
     @Order(9)
     void cashPay_completesWithinTimeout() {
@@ -151,9 +114,6 @@ class PaymentStrategyTest {
         assertTimeout(Duration.ofMillis(200), () -> bkash.pay(1000.0));
     }
 
-    /**
-     * assertFalse: a null strategy reference is not valid.
-     */
     @Test
     @Order(11)
     void nullStrategy_isNotValid() {

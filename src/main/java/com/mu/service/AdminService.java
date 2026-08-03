@@ -15,14 +15,10 @@ public class AdminService {
         adminDAO = com.mu.factory.DAOFactory.createAdminDAO();
     }
 
-    // Constructor injection — used by tests via Mockito @InjectMocks
     public AdminService(AdminDAO adminDAO) {
         this.adminDAO = adminDAO;
     }
 
-    // -----------------------------
-    // Admin Login
-    // -----------------------------
     public Admin login(String username, String password) {
 
         if (username == null || username.trim().isEmpty()) {
@@ -36,9 +32,6 @@ public class AdminService {
         return adminDAO.login(username, password);
     }
 
-    // -----------------------------
-    // Admin Registration
-    // -----------------------------
     public boolean register(Admin admin) {
 
         if (admin == null) {
@@ -64,9 +57,6 @@ public class AdminService {
         return adminDAO.register(admin);
     }
 
-    // -----------------------------
-    // Dashboard Statistics
-    // -----------------------------
     public int getTotalStudents() {
         return adminDAO.getTotalStudents();
     }
@@ -75,16 +65,10 @@ public class AdminService {
         return adminDAO.getTotalPayments();
     }
 
-    // -----------------------------
-    // View Students
-    // -----------------------------
     public List<Student> getAllStudents() {
         return adminDAO.getAllStudents();
     }
 
-    // -----------------------------
-    // View Payments
-    // -----------------------------
     public List<Payment> getAllPayments() {
         return adminDAO.getAllPayments();
     }

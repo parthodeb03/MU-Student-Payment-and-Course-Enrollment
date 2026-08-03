@@ -88,7 +88,7 @@ class PaymentServiceTest {
     }
 
     @ParameterizedTest(name = "method [{0}] should be accepted")
-    @ValueSource(strings = {"cash", "bkash", "card", "CASH", "BKASH", "CARD"})
+    @ValueSource(strings = { "cash", "bkash", "card", "CASH", "BKASH", "CARD" })
     @Order(6)
     void makePayment_validMethods_noThrow(String method) {
         try {
@@ -116,6 +116,7 @@ class PaymentServiceTest {
     void paymentModel_setAmount_updatesField() {
         Payment p = new Payment();
         p.setAmount(2500.0);
+        // Verify the setter actually stores the value (was broken before fix)
         assertEquals(2500.0, p.getAmount(), 0.001);
     }
 
@@ -129,8 +130,8 @@ class PaymentServiceTest {
     @Test
     @Order(10)
     void paymentAmounts_matchExpected() {
-        double[] expectedAmounts = {500.0, 1000.0, 1500.0};
-        double[] actualAmounts   = {500.0, 1000.0, 1500.0};
+        double[] expectedAmounts = { 500.0, 1000.0, 1500.0 };
+        double[] actualAmounts = { 500.0, 1000.0, 1500.0 };
         assertArrayEquals(expectedAmounts, actualAmounts, 0.001);
     }
 
@@ -143,14 +144,14 @@ class PaymentServiceTest {
         });
     }
 
-    @ParameterizedTest(name = "id={0}, amount={1}, method={2} -> throws={3}")
+    @ParameterizedTest(name = "id={0}, amount={1}, method={2} â†’ throws={3}")
     @CsvSource({
-        "1,    500,  cash,    false",
-        "0,    500,  cash,    true",
-        "1,    0,    cash,    true",
-        "1,    500,  null,    true",
-        "-1,   500,  bkash,   true",
-        "1,    -100, card,    true",
+            "1,    500,  cash,    false",
+            "0,    500,  cash,    true",
+            "1,    0,    cash,    true",
+            "1,    500,  null,    true",
+            "-1,   500,  bkash,   true",
+            "1,    -100, card,    true",
     })
     @Order(12)
     void makePayment_decisionTable(int id, double amount, String method, boolean shouldThrow) {
@@ -164,6 +165,7 @@ class PaymentServiceTest {
             } catch (IllegalArgumentException e) {
                 fail("Should not throw for valid inputs");
             } catch (Exception ignored) {
+
             }
         }
     }
