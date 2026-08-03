@@ -6,18 +6,18 @@ public class Admin {
     private String username;
     private String password;
 
-    // Default Constructor
+
     public Admin() {
     }
 
-    // Parameterized Constructor
+
     public Admin(int adminId, String username, String password) {
         this.adminId = adminId;
         this.username = username;
         this.password = password;
     }
 
-    // Getters & Setters
+
 
     public int getAdminId() {
         return adminId;

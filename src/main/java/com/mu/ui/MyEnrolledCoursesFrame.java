@@ -34,7 +34,7 @@ public class MyEnrolledCoursesFrame extends JFrame {
         mainPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
         setContentPane(mainPanel);
 
-        // Header Panel
+
         JPanel headerPanel = UITheme.createCardPanel();
         headerPanel.setLayout(new BorderLayout());
 
@@ -50,7 +50,7 @@ public class MyEnrolledCoursesFrame extends JFrame {
         headerPanel.add(lblTotalCredits, BorderLayout.EAST);
         mainPanel.add(headerPanel, BorderLayout.NORTH);
 
-        // Table
+
         model = new DefaultTableModel() {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -68,7 +68,6 @@ public class MyEnrolledCoursesFrame extends JFrame {
         scrollPane.setBorder(BorderFactory.createEmptyBorder());
         mainPanel.add(scrollPane, BorderLayout.CENTER);
 
-        // Action Panel
         JPanel actionPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
         actionPanel.setBackground(UITheme.BACKGROUND_COLOR);
 

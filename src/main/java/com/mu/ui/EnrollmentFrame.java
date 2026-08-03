@@ -38,7 +38,7 @@ public class EnrollmentFrame extends JFrame {
         mainPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
         setContentPane(mainPanel);
 
-        // Header
+
         JPanel headerPanel = UITheme.createCardPanel();
         headerPanel.setLayout(new BorderLayout(8, 8));
 
@@ -54,7 +54,7 @@ public class EnrollmentFrame extends JFrame {
 
         mainPanel.add(headerPanel, BorderLayout.NORTH);
 
-        // Form Panel
+
         JPanel formCard = UITheme.createCardPanel();
         formCard.setLayout(new GridBagLayout());
 
@@ -87,7 +87,7 @@ public class EnrollmentFrame extends JFrame {
 
         mainPanel.add(formCard, BorderLayout.CENTER);
 
-        // Action Panel
+
         JPanel actionPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
         actionPanel.setBackground(UITheme.BACKGROUND_COLOR);
 

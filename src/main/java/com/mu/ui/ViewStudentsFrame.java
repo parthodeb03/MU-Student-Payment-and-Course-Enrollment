@@ -37,7 +37,7 @@ public class ViewStudentsFrame extends JFrame {
         mainPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
         setContentPane(mainPanel);
 
-        // Top Header
+
         JPanel topPanel = UITheme.createCardPanel();
         topPanel.setLayout(new BorderLayout(10, 10));
 
@@ -60,7 +60,7 @@ public class ViewStudentsFrame extends JFrame {
 
         mainPanel.add(topPanel, BorderLayout.NORTH);
 
-        // Table
+
         model = new DefaultTableModel() {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -85,7 +85,7 @@ public class ViewStudentsFrame extends JFrame {
         scrollPane.setBorder(BorderFactory.createEmptyBorder());
         mainPanel.add(scrollPane, BorderLayout.CENTER);
 
-        // Footer
+
         JPanel footerPanel = new JPanel(new BorderLayout());
         footerPanel.setBackground(UITheme.BACKGROUND_COLOR);
 
@@ -102,7 +102,6 @@ public class ViewStudentsFrame extends JFrame {
 
         loadStudents();
 
-        // Search Listener
         txtSearch.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) { filter(); }

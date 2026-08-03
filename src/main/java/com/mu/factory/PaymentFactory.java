@@ -3,7 +3,6 @@ package com.mu.factory;
 public class PaymentFactory {
 
     private PaymentFactory() {
-        // Prevent object creation
     }
 
     public static PaymentStrategy createPayment(String paymentMethod) {

@@ -44,7 +44,7 @@ public class CourseManagementFrame extends JFrame {
         mainPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
         setContentPane(mainPanel);
 
-        // Header
+
         JPanel topPanel = UITheme.createCardPanel();
         topPanel.setLayout(new BorderLayout());
 
@@ -65,7 +65,7 @@ public class CourseManagementFrame extends JFrame {
 
         mainPanel.add(topPanel, BorderLayout.NORTH);
 
-        // Table
+
         model = new DefaultTableModel() {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -85,7 +85,7 @@ public class CourseManagementFrame extends JFrame {
         JScrollPane scrollPane = new JScrollPane(table);
         scrollPane.setBorder(BorderFactory.createEmptyBorder());
 
-        // Left Form Panel
+
         JPanel formPanel = UITheme.createCardPanel();
         formPanel.setLayout(new GridBagLayout());
         formPanel.setPreferredSize(new Dimension(300, 0));
@@ -119,7 +119,6 @@ public class CourseManagementFrame extends JFrame {
         txtCredit = UITheme.createTextField(14);
         formPanel.add(txtCredit, gbc);
 
-        // Form Buttons
         JPanel btnFormPanel = new JPanel(new GridLayout(3, 1, 8, 8));
         btnFormPanel.setOpaque(false);
 
@@ -134,7 +133,7 @@ public class CourseManagementFrame extends JFrame {
         gbc.gridy = 5;
         formPanel.add(btnFormPanel, gbc);
 
-        // Center split
+
         JPanel centerSplit = new JPanel(new BorderLayout(15, 15));
         centerSplit.setBackground(UITheme.BACKGROUND_COLOR);
         centerSplit.add(formPanel, BorderLayout.WEST);
@@ -142,7 +141,7 @@ public class CourseManagementFrame extends JFrame {
 
         mainPanel.add(centerSplit, BorderLayout.CENTER);
 
-        // Footer
+
         JPanel footerPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         footerPanel.setBackground(UITheme.BACKGROUND_COLOR);
         btnBack = UITheme.createOutlineButton("Back to Dashboard");
@@ -151,7 +150,7 @@ public class CourseManagementFrame extends JFrame {
 
         loadCourses();
 
-        // Selection Listener
+
         table.getSelectionModel().addListSelectionListener(e -> {
             int selectedRow = table.getSelectedRow();
             if (selectedRow != -1) {
@@ -162,7 +161,7 @@ public class CourseManagementFrame extends JFrame {
             }
         });
 
-        // Search Filter
+
         txtSearch.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) { filter(); }

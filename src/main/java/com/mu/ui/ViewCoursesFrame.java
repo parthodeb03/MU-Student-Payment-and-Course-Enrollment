@@ -36,7 +36,6 @@ public class ViewCoursesFrame extends JFrame {
         mainPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
         setContentPane(mainPanel);
 
-        // Header and Search Bar Panel
         JPanel topPanel = UITheme.createCardPanel();
         topPanel.setLayout(new BorderLayout(10, 10));
 
@@ -56,7 +55,7 @@ public class ViewCoursesFrame extends JFrame {
 
         mainPanel.add(topPanel, BorderLayout.NORTH);
 
-        // Table
+
         model = new DefaultTableModel() {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -87,7 +86,7 @@ public class ViewCoursesFrame extends JFrame {
 
         loadCourses();
 
-        // Search Filter Event
+
         txtSearch.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) { filter(); }

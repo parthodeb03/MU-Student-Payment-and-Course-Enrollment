@@ -11,7 +11,7 @@ public class NotificationService {
 
         observers = new ArrayList<>();
 
-        // Automatically register one observer
+
         observers.add(new StudentObserver());
 
     }
