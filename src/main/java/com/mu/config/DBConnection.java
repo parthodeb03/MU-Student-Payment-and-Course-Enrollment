@@ -9,8 +9,7 @@ public class DBConnection {
     private static DBConnection instance;
     private Connection connection;
 
-    private static final String URL =
-            "jdbc:mysql://localhost:3306/mu_course_enrollment";
+    private static final String url = "jdbc:mysql://localhost:3306/mu_course_enrollment";
     private static final String USER = "root";
     private static final String PASSWORD = "";
 
@@ -33,7 +32,7 @@ public class DBConnection {
             if (connection == null || connection.isClosed()) {
 
                 connection = DriverManager.getConnection(
-                        URL,
+                        url,
                         USER,
                         PASSWORD
                 );

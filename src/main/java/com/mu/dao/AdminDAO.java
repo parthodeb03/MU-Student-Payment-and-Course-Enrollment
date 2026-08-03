@@ -100,7 +100,7 @@ public class AdminDAO {
                 student.setEmail(rs.getString("email"));
                 student.setDepartment(rs.getString("department"));
                 student.setBatch(rs.getString("batch"));
-                student.setStudentId(rs.getString("university_id"));
+                student.setStudentId(rs.getString("student_id"));
                 student.setPhone(rs.getString("phone"));
                 list.add(student);
             }

@@ -40,7 +40,7 @@ public class PaymentDAO {
     public List<Payment> getPaymentHistory(String studentId) {
         List<Payment> payments = new ArrayList<>();
         String sql = """
-                SELECT p.*, s.university_id
+                SELECT p.*, s.student_id
                 FROM payments p
                 JOIN students s ON p.student_id = s.student_id
                 WHERE p.student_id=?
@@ -60,7 +60,7 @@ public class PaymentDAO {
     public List<Payment> getAllPayments() {
         List<Payment> payments = new ArrayList<>();
         String sql = """
-                SELECT p.*, s.university_id
+                SELECT p.*, s.student_id
                 FROM payments p
                 JOIN students s ON p.student_id = s.student_id
                 ORDER BY p.payment_date DESC
@@ -78,7 +78,7 @@ public class PaymentDAO {
     public List<Payment> getPendingPayments() {
         List<Payment> payments = new ArrayList<>();
         String sql = """
-                SELECT p.*, s.university_id
+                SELECT p.*, s.student_id
                 FROM payments p
                 JOIN students s ON p.student_id = s.student_id
                 WHERE p.status='PENDING'
