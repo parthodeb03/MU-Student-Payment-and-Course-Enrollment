@@ -3,112 +3,25 @@ package com.mu.ui;
 import com.mu.model.Admin;
 import com.mu.service.AdminService;
 import com.mu.ui.theme.UITheme;
-
+import com.mu.util.InputValidator;
 import javax.swing.*;
 import java.awt.*;
 
 public class AdminLoginFrame extends JFrame {
-
-    private JTextField txtUsername;
-    private JPasswordField txtPassword;
-    private JCheckBox chkShowPassword;
-
-    private JButton btnLogin;
-    private JButton btnBack;
-
-    private AdminService adminService;
-
+    private JTextField txtUsername; private JPasswordField txtPassword; private JLabel lblValidation; private final AdminService adminService = new AdminService();
     public AdminLoginFrame() {
-        adminService = new AdminService();
-
-        setTitle("Admin Portal");
-        setSize(520, 400);
-        setLocationRelativeTo(null);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
-
-        JPanel contentPanel = new JPanel(new BorderLayout(16, 16));
-        contentPanel.setBackground(UITheme.BACKGROUND_COLOR);
-        contentPanel.setBorder(BorderFactory.createEmptyBorder(24, 24, 24, 24));
-        setContentPane(contentPanel);
-
-        JLabel lblTitle = UITheme.createLabel("Administrator Login", UITheme.HEADER_FONT, UITheme.PRIMARY_COLOR);
-        JLabel lblSubtitle = UITheme.createLabel("Secure access to university management tools", UITheme.BODY_FONT, UITheme.TEXT_MUTED);
-
-        JPanel header = new JPanel(new GridLayout(2, 1, 0, 6));
-        header.setOpaque(false);
-        header.add(lblTitle);
-        header.add(lblSubtitle);
-
-        JPanel formCard = UITheme.createCardPanel();
-        formCard.setLayout(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(12, 12, 12, 12);
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.anchor = GridBagConstraints.WEST;
-
-        gbc.gridx = 0; gbc.gridy = 0; gbc.gridwidth = 2;
-        formCard.add(UITheme.createLabel("Admin Login", UITheme.SUBHEADER_FONT, UITheme.TEXT_DARK), gbc);
-
-        gbc.gridy++; gbc.gridwidth = 1;
-        formCard.add(UITheme.createLabel("Username:"), gbc);
-        gbc.gridx = 1;
-        txtUsername = UITheme.createTextField(20);
-        formCard.add(txtUsername, gbc);
-
-        gbc.gridx = 0; gbc.gridy++;
-        formCard.add(UITheme.createLabel("Password:"), gbc);
-        gbc.gridx = 1;
-        txtPassword = UITheme.createPasswordField(20);
-        formCard.add(txtPassword, gbc);
-
-        gbc.gridx = 1; gbc.gridy++;
-        chkShowPassword = new JCheckBox("Show Password");
-        chkShowPassword.setFont(UITheme.SMALL_FONT);
-        chkShowPassword.setBackground(UITheme.SURFACE_COLOR);
-        chkShowPassword.setForeground(UITheme.TEXT_MUTED);
-        chkShowPassword.addActionListener(e -> {
-            txtPassword.setEchoChar(chkShowPassword.isSelected() ? (char) 0 : '•');
-        });
-        formCard.add(chkShowPassword, gbc);
-
-        gbc.gridx = 0; gbc.gridy++; gbc.gridwidth = 2;
-        JPanel buttonRow = new JPanel(new GridLayout(1, 2, 12, 0));
-        buttonRow.setOpaque(false);
-        btnLogin = UITheme.createPrimaryButton("Login");
-        btnBack = UITheme.createOutlineButton("Back");
-        buttonRow.add(btnLogin);
-        buttonRow.add(btnBack);
-        formCard.add(buttonRow, gbc);
-
-        contentPanel.add(header, BorderLayout.NORTH);
-        contentPanel.add(formCard, BorderLayout.CENTER);
-
-        btnLogin.addActionListener(e -> login());
-        btnBack.addActionListener(e -> { new LoginFrame(); dispose(); });
-
-        setVisible(true);
+        setTitle("Admin Portal"); setSize(560, 440); setLocationRelativeTo(null); setDefaultCloseOperation(EXIT_ON_CLOSE);
+        JPanel content = new JPanel(new BorderLayout(16,16)); content.setBackground(UITheme.BACKGROUND_COLOR); content.setBorder(BorderFactory.createEmptyBorder(24,24,24,24)); setContentPane(content);
+        JPanel header = new JPanel(new GridLayout(2,1,0,6)); header.setOpaque(false); header.add(UITheme.createLabel("Administrator Login", UITheme.HEADER_FONT, UITheme.PRIMARY_COLOR)); header.add(UITheme.createLabel("Secure access to university management tools", UITheme.BODY_FONT, UITheme.TEXT_MUTED));
+        JPanel card = UITheme.createCardPanel(); card.setLayout(new GridBagLayout()); GridBagConstraints gbc = c(); gbc.gridwidth=2; card.add(UITheme.createLabel("Admin Login", UITheme.SUBHEADER_FONT, UITheme.TEXT_DARK),gbc);
+        gbc.gridy++; gbc.gridwidth=1; card.add(UITheme.createLabel("Username *:"),gbc); gbc.gridx=1; txtUsername=UITheme.createTextField(20); card.add(txtUsername,gbc);
+        gbc.gridx=0; gbc.gridy++; card.add(UITheme.createLabel("Password *:"),gbc); gbc.gridx=1; txtPassword=UITheme.createPasswordField(20); card.add(txtPassword,gbc);
+        gbc.gridx=0; gbc.gridy++; gbc.gridwidth=2; JCheckBox show=new JCheckBox("Show password"); show.setOpaque(false); show.setFont(UITheme.SMALL_FONT); show.addActionListener(e->txtPassword.setEchoChar(show.isSelected()?(char)0:'*')); card.add(show,gbc);
+        gbc.gridy++; lblValidation=UITheme.createLabel("New admin? Create an account below.",UITheme.SMALL_FONT,UITheme.TEXT_MUTED); card.add(lblValidation,gbc);
+        gbc.gridy++; JPanel buttons=new JPanel(new GridLayout(1,3,12,0)); buttons.setOpaque(false); JButton login=UITheme.createPrimaryButton("Login"), register=UITheme.createOutlineButton("Admin Register"), back=UITheme.createOutlineButton("Back"); buttons.add(login); buttons.add(register); buttons.add(back); card.add(buttons,gbc);
+        content.add(header,BorderLayout.NORTH); content.add(card,BorderLayout.CENTER); login.addActionListener(e->login()); register.addActionListener(e->{new AdminRegistrationFrame();dispose();}); back.addActionListener(e->{new LoginFrame();dispose();}); setVisible(true);
     }
-
-    private void login() {
-        try {
-            String username = txtUsername.getText().trim();
-            String password = String.valueOf(txtPassword.getPassword());
-
-            if (username.isEmpty() || password.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Please enter both username and password.", "Missing Information", JOptionPane.WARNING_MESSAGE);
-                return;
-            }
-
-            Admin admin = adminService.login(username, password);
-            if (admin != null) {
-                JOptionPane.showMessageDialog(this, "Admin Login Successful.", "Welcome", JOptionPane.INFORMATION_MESSAGE);
-                new AdminDashboardFrame();
-                dispose();
-            } else {
-                JOptionPane.showMessageDialog(this, "Invalid Username or Password.", "Login Failed", JOptionPane.ERROR_MESSAGE);
-            }
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-        }
-    }
+    private GridBagConstraints c(){GridBagConstraints g=new GridBagConstraints();g.insets=new Insets(12,12,12,12);g.fill=GridBagConstraints.HORIZONTAL;g.anchor=GridBagConstraints.WEST;g.gridx=0;g.gridy=0;return g;}
+    private void login(){try{String username=txtUsername.getText().trim(), password=String.valueOf(txtPassword.getPassword());if(username.isEmpty()||password.isEmpty()){error("Username and password are required.");return;}if(!InputValidator.isValidUsername(username)){error("Username must be 4-30 letters, numbers, or underscores.");return;}Admin admin=adminService.login(username,password);if(admin!=null){new AdminDashboardFrame();dispose();}else JOptionPane.showMessageDialog(this,"Invalid username or password.","Login Failed",JOptionPane.ERROR_MESSAGE);}catch(Exception ex){error(ex.getMessage());}}
+    private void error(String message){lblValidation.setForeground(UITheme.DANGER_COLOR);lblValidation.setText(message);}
 }
