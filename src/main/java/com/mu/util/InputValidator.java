@@ -36,7 +36,7 @@ public final class InputValidator {
     }
 
     public static boolean isValidPaymentAmount(double amount) {
-        return amount > 0 && amount <= 100_000;
+        return amount > 0 && amount <= 100000;
     }
 
     public static boolean isValidStudentId(int id) {

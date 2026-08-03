@@ -20,18 +20,16 @@ public class AdminService {
     }
 
     public Admin login(String username, String password) {
-
         if (username == null || username.trim().isEmpty()) {
             throw new IllegalArgumentException("Username cannot be empty.");
         }
-
         if (password == null || password.trim().isEmpty()) {
             throw new IllegalArgumentException("Password cannot be empty.");
         }
-
         return adminDAO.login(username, password);
     }
 
+<<<<<<< HEAD
     public boolean register(Admin admin) {
 
         if (admin == null) {
@@ -57,6 +55,8 @@ public class AdminService {
         return adminDAO.register(admin);
     }
 
+=======
+>>>>>>> 0811db3 (database changed)
     public int getTotalStudents() {
         return adminDAO.getTotalStudents();
     }
@@ -73,4 +73,12 @@ public class AdminService {
         return adminDAO.getAllPayments();
     }
 
+    public List<Payment> getPendingPayments() {
+        return adminDAO.getPendingPayments();
+    }
+
+    public boolean approvePayment(int paymentId) {
+        if (paymentId <= 0) throw new IllegalArgumentException("Invalid payment ID.");
+        return adminDAO.approvePayment(paymentId);
+    }
 }

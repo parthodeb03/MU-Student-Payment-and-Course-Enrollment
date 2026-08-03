@@ -26,7 +26,7 @@ public class DashboardFrame extends JFrame {
         paymentDAO = com.mu.factory.DAOFactory.createPaymentDAO();
 
         setTitle("Metropolitan University - Student Dashboard");
-        setSize(750, 500);
+        setSize(750, 520);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
@@ -35,12 +35,14 @@ public class DashboardFrame extends JFrame {
         mainPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
         setContentPane(mainPanel);
 
-        // Header Panel
         JPanel headerPanel = UITheme.createCardPanel();
         headerPanel.setLayout(new BorderLayout(8, 8));
 
         JLabel lblWelcome = UITheme.createLabel("Welcome back, " + Session.getCurrentStudent().getName() + "!", UITheme.TITLE_FONT, UITheme.PRIMARY_COLOR);
-        JLabel lblSubtitle = UITheme.createLabel("Student Portal - ID: " + Session.getCurrentStudent().getStudentId(), UITheme.SUBHEADER_FONT, UITheme.TEXT_MUTED);
+        JLabel lblSubtitle = UITheme.createLabel(
+                Session.getCurrentStudent().getDepartment() + " | Batch: " + Session.getCurrentStudent().getBatch() + " | ID: " + Session.getCurrentStudent().getStudentId(),
+                UITheme.SUBHEADER_FONT, UITheme.TEXT_MUTED
+        );
         JLabel lblHint = UITheme.createLabel("Quick actions keep your enrollment and payments up to date.", UITheme.SMALL_FONT, UITheme.TEXT_MUTED);
 
         headerPanel.add(lblWelcome, BorderLayout.NORTH);
@@ -49,18 +51,17 @@ public class DashboardFrame extends JFrame {
 
         mainPanel.add(headerPanel, BorderLayout.NORTH);
 
-        // Stats Panel
-        int studentId = Session.getCurrentStudent().getStudentId();
+        String studentId = Session.getCurrentStudent().getStudentId();
+        String universityId = Session.getCurrentStudent().getStudentId();
         int enrolledCount = enrollmentDAO.countEnrolledCourses(studentId);
-        double totalPaid = paymentDAO.getTotalPaid(studentId);
+        double totalPaid = paymentDAO.getTotalPaid(universityId);
 
         JPanel statsPanel = new JPanel(new GridLayout(1, 2, 15, 0));
         statsPanel.setBackground(UITheme.BACKGROUND_COLOR);
 
-        statsPanel.add(UITheme.createStatCard("Enrolled Courses", enrolledCount + " / 3 Courses", UITheme.PRIMARY_COLOR));
+        statsPanel.add(UITheme.createStatCard("Enrolled Courses", enrolledCount + " / 6 Courses", UITheme.PRIMARY_COLOR));
         statsPanel.add(UITheme.createStatCard("Total Amount Paid", "$" + String.format("%.2f", totalPaid), UITheme.SUCCESS_COLOR));
 
-        // Navigation Grid Panel
         JPanel gridPanel = new JPanel(new GridLayout(2, 3, 12, 12));
         gridPanel.setBackground(UITheme.BACKGROUND_COLOR);
 
@@ -85,7 +86,6 @@ public class DashboardFrame extends JFrame {
 
         mainPanel.add(centerPanel, BorderLayout.CENTER);
 
-        // Button Actions
         btnMyCourses.addActionListener(e -> {
             new MyEnrolledCoursesFrame();
             dispose();

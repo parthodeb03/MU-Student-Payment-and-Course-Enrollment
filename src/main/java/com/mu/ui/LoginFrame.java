@@ -12,11 +12,11 @@ public class LoginFrame extends JFrame {
 
     private JTextField txtEmail;
     private JPasswordField txtPassword;
+    private JCheckBox chkShowPassword;
 
     private JButton btnLogin;
     private JButton btnRegister;
     private JButton btnAdmin;
-    private JButton btnAdminRegister;
 
     private LoginService loginService;
 
@@ -24,7 +24,7 @@ public class LoginFrame extends JFrame {
         loginService = new LoginService();
 
         setTitle("Metropolitan University Portal");
-        setSize(520, 420);
+        setSize(520, 460);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
@@ -48,28 +48,32 @@ public class LoginFrame extends JFrame {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.anchor = GridBagConstraints.WEST;
 
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.gridwidth = 2;
+        gbc.gridx = 0; gbc.gridy = 0; gbc.gridwidth = 2;
         formCard.add(UITheme.createLabel("Student Login", UITheme.SUBHEADER_FONT, UITheme.TEXT_DARK), gbc);
 
-        gbc.gridy++;
-        gbc.gridwidth = 1;
+        gbc.gridy++; gbc.gridwidth = 1;
         formCard.add(UITheme.createLabel("Email:"), gbc);
         gbc.gridx = 1;
         txtEmail = UITheme.createTextField(20);
         formCard.add(txtEmail, gbc);
 
-        gbc.gridx = 0;
-        gbc.gridy++;
+        gbc.gridx = 0; gbc.gridy++;
         formCard.add(UITheme.createLabel("Password:"), gbc);
         gbc.gridx = 1;
         txtPassword = UITheme.createPasswordField(20);
         formCard.add(txtPassword, gbc);
 
-        gbc.gridx = 0;
-        gbc.gridy++;
-        gbc.gridwidth = 2;
+        gbc.gridx = 1; gbc.gridy++;
+        chkShowPassword = new JCheckBox("Show Password");
+        chkShowPassword.setFont(UITheme.SMALL_FONT);
+        chkShowPassword.setBackground(UITheme.SURFACE_COLOR);
+        chkShowPassword.setForeground(UITheme.TEXT_MUTED);
+        chkShowPassword.addActionListener(e -> {
+            txtPassword.setEchoChar(chkShowPassword.isSelected() ? (char) 0 : '•');
+        });
+        formCard.add(chkShowPassword, gbc);
+
+        gbc.gridx = 0; gbc.gridy++; gbc.gridwidth = 2;
         JPanel authButtons = new JPanel(new GridLayout(1, 2, 12, 0));
         authButtons.setOpaque(false);
         btnLogin = UITheme.createPrimaryButton("Login");
@@ -79,12 +83,10 @@ public class LoginFrame extends JFrame {
         formCard.add(authButtons, gbc);
 
         gbc.gridy++;
-        JPanel adminButtons = new JPanel(new GridLayout(1, 2, 12, 0));
+        JPanel adminButtons = new JPanel(new GridLayout(1, 1, 12, 0));
         adminButtons.setOpaque(false);
         btnAdmin = UITheme.createSecondaryButton("Admin Login");
-        btnAdminRegister = UITheme.createSecondaryButton("Admin Register");
         adminButtons.add(btnAdmin);
-        adminButtons.add(btnAdminRegister);
         formCard.add(adminButtons, gbc);
 
         gbc.gridy++;
@@ -94,18 +96,8 @@ public class LoginFrame extends JFrame {
         contentPanel.add(formCard, BorderLayout.CENTER);
 
         btnLogin.addActionListener(e -> login());
-        btnRegister.addActionListener(e -> {
-            new RegisterFrame();
-            dispose();
-        });
-        btnAdmin.addActionListener(e -> {
-            new AdminLoginFrame();
-            dispose();
-        });
-        btnAdminRegister.addActionListener(e -> {
-            new AdminRegistrationFrame();
-            dispose();
-        });
+        btnRegister.addActionListener(e -> { new RegisterFrame(); dispose(); });
+        btnAdmin.addActionListener(e -> { new AdminLoginFrame(); dispose(); });
 
         setVisible(true);
     }

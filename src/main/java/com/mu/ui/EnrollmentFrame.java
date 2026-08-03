@@ -43,9 +43,9 @@ public class EnrollmentFrame extends JFrame {
         headerPanel.setLayout(new BorderLayout(8, 8));
 
         JLabel lblTitle = UITheme.createLabel("Enroll in a Course", UITheme.TITLE_FONT, UITheme.PRIMARY_COLOR);
-        int studentId = Session.getCurrentStudent().getStudentId();
+        String studentId = Session.getCurrentStudent().getStudentId();
         int enrolledCount = enrollmentDAO.countEnrolledCourses(studentId);
-        lblCapacity = UITheme.createLabel("Status: " + enrolledCount + " / 3 Enrolled", UITheme.SUBHEADER_FONT, enrolledCount >= 3 ? UITheme.DANGER_COLOR : UITheme.SUCCESS_COLOR);
+        lblCapacity = UITheme.createLabel("Status: " + enrolledCount + " / 6 Enrolled", UITheme.SUBHEADER_FONT, enrolledCount >= 6 ? UITheme.DANGER_COLOR : UITheme.SUCCESS_COLOR);
         JLabel lblHint = UITheme.createLabel("Choose your next course and complete enrollment.", UITheme.SMALL_FONT, UITheme.TEXT_MUTED);
 
         headerPanel.add(lblTitle, BorderLayout.NORTH);
@@ -126,7 +126,7 @@ public class EnrollmentFrame extends JFrame {
                 return;
             }
 
-            int studentId = Session.getCurrentStudent().getStudentId();
+            String studentId = Session.getCurrentStudent().getStudentId();
             boolean success = enrollmentService.enrollCourse(studentId, selectedCourse.getCourseId());
 
             if (success) {

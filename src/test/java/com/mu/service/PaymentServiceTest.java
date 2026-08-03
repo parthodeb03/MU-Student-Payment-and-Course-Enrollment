@@ -105,7 +105,7 @@ class PaymentServiceTest {
         Payment p = new Payment(1, 10, 1500.0, "cash", LocalDate.of(2025, 1, 15));
 
         assertEquals(1, p.getPaymentId());
-        assertEquals(10, p.getStudentId());
+        assertEquals(241-134-016, p.getStudentId());
         assertEquals(1500.0, p.getAmount(), 0.001);
         assertEquals("cash", p.getPaymentMethod());
         assertNotNull(p.getPaymentDate());

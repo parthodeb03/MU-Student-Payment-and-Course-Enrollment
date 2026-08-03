@@ -17,9 +17,9 @@ public class EnrollmentService {
 
     }
 
-    public boolean enrollCourse(int studentId, int courseId) {
+    public boolean enrollCourse(String studentId, int courseId) {
 
-        if (studentId <= 0) {
+        if (studentId==null) {
             throw new IllegalArgumentException("Invalid Student ID.");
         }
 
@@ -31,8 +31,8 @@ public class EnrollmentService {
             throw new IllegalArgumentException("You are already enrolled in this course.");
         }
 
-        if (enrollmentDAO.countEnrolledCourses(studentId) >= 3) {
-            throw new IllegalArgumentException("Maximum 3 courses allowed.");
+        if (enrollmentDAO.countEnrolledCourses(studentId) >= 6) {
+            throw new IllegalArgumentException("Maximum 6 courses allowed.");
         }
 
         boolean success = enrollmentDAO.enrollCourse(studentId, courseId);
@@ -48,13 +48,13 @@ public class EnrollmentService {
         return success;
     }
 
-    public List<com.mu.model.Course> getEnrolledCourses(int studentId) {
+    public List<com.mu.model.Course> getEnrolledCourses(String studentId) {
 
         return enrollmentDAO.getEnrolledCourses(studentId);
 
     }
 
-    public boolean dropCourse(int studentId, int courseId) {
+    public boolean dropCourse(String studentId, int courseId) {
 
         return enrollmentDAO.dropCourse(studentId, courseId);
 

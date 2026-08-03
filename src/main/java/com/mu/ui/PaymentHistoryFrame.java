@@ -30,7 +30,7 @@ public class PaymentHistoryFrame extends JFrame {
         paymentService = new PaymentService();
 
         setTitle("My Payment History");
-        setSize(750, 480);
+        setSize(850, 520);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
@@ -39,41 +39,34 @@ public class PaymentHistoryFrame extends JFrame {
         mainPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
         setContentPane(mainPanel);
 
-        // Header and Search Bar
         JPanel topPanel = UITheme.createCardPanel();
         topPanel.setLayout(new BorderLayout(10, 10));
 
         JLabel lblTitle = UITheme.createLabel("My Transaction History", UITheme.TITLE_FONT, UITheme.PRIMARY_COLOR);
-
         JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         searchPanel.setOpaque(false);
-
         JLabel lblSearch = UITheme.createLabel("Search History:", UITheme.BODY_BOLD, UITheme.TEXT_DARK);
         txtSearch = UITheme.createTextField(16);
-
         searchPanel.add(lblSearch);
         searchPanel.add(txtSearch);
-
         topPanel.add(lblTitle, BorderLayout.WEST);
         topPanel.add(searchPanel, BorderLayout.EAST);
-
         mainPanel.add(topPanel, BorderLayout.NORTH);
 
-        // Table
         model = new DefaultTableModel() {
             @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
+            public boolean isCellEditable(int row, int column) { return false; }
         };
         model.addColumn("Payment ID");
+        model.addColumn("Type");
         model.addColumn("Amount");
-        model.addColumn("Payment Method");
-        model.addColumn("Payment Date");
+        model.addColumn("Method");
+        model.addColumn("Details");
+        model.addColumn("Date");
+        model.addColumn("Status");
 
         table = new JTable(model);
         UITheme.styleTable(table);
-
         sorter = new TableRowSorter<>(model);
         table.setRowSorter(sorter);
 
@@ -81,72 +74,55 @@ public class PaymentHistoryFrame extends JFrame {
         scrollPane.setBorder(BorderFactory.createEmptyBorder());
         mainPanel.add(scrollPane, BorderLayout.CENTER);
 
-        // Footer Action Panel
         JPanel footerPanel = new JPanel(new BorderLayout());
         footerPanel.setBackground(UITheme.BACKGROUND_COLOR);
-
         lblTotalPaid = UITheme.createLabel("Total Paid: $0.00", UITheme.HEADER_FONT, UITheme.SUCCESS_COLOR);
-
         JPanel rightBtns = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
         rightBtns.setBackground(UITheme.BACKGROUND_COLOR);
-
         btnViewReceipt = UITheme.createSecondaryButton("View Selected Receipt");
         btnBack = UITheme.createOutlineButton("Back to Dashboard");
-
         rightBtns.add(btnViewReceipt);
         rightBtns.add(btnBack);
-
         footerPanel.add(lblTotalPaid, BorderLayout.WEST);
         footerPanel.add(rightBtns, BorderLayout.EAST);
-
         mainPanel.add(footerPanel, BorderLayout.SOUTH);
 
         loadHistory();
 
-        // Search Filter Event
         txtSearch.getDocument().addDocumentListener(new DocumentListener() {
-            @Override
-            public void insertUpdate(DocumentEvent e) { filter(); }
-            @Override
-            public void removeUpdate(DocumentEvent e) { filter(); }
-            @Override
-            public void changedUpdate(DocumentEvent e) { filter(); }
-
+            @Override public void insertUpdate(DocumentEvent e) { filter(); }
+            @Override public void removeUpdate(DocumentEvent e) { filter(); }
+            @Override public void changedUpdate(DocumentEvent e) { filter(); }
             private void filter() {
                 String text = txtSearch.getText().trim();
-                if (text.isEmpty()) {
-                    sorter.setRowFilter(null);
-                } else {
-                    sorter.setRowFilter(RowFilter.regexFilter("(?i)" + text));
-                }
+                sorter.setRowFilter(text.isEmpty() ? null : RowFilter.regexFilter("(?i)" + text));
             }
         });
 
         btnViewReceipt.addActionListener(e -> showSelectedReceipt());
-        btnBack.addActionListener(e -> {
-            new DashboardFrame();
-            dispose();
-        });
+        btnBack.addActionListener(e -> { new DashboardFrame(); dispose(); });
 
         setVisible(true);
     }
 
     private void loadHistory() {
         model.setRowCount(0);
-        int studentId = Session.getCurrentStudent().getStudentId();
+        String studentId = Session.getCurrentStudent().getStudentId();
         List<Payment> list = paymentService.getPaymentHistory(studentId);
         double totalSum = 0;
 
         for (Payment p : list) {
-            model.addRow(new Object[]{
-                    p.getPaymentId(),
-                    "$" + String.format("%.2f", p.getAmount()),
-                    p.getPaymentMethod(),
-                    p.getPaymentDate()
-            });
-            totalSum += p.getAmount();
-        }
+            String details = "";
+            if (p.getMonth() != null && !p.getMonth().isEmpty()) details = p.getMonth() + " " + p.getYear();
+            else if (p.getTermName() != null && !p.getTermName().isEmpty()) details = p.getTermName();
 
+            model.addRow(new Object[]{
+                    p.getPaymentId(), p.getPaymentType(),
+                    "$" + String.format("%.2f", p.getAmount()), p.getPaymentMethod(),
+                    details, p.getPaymentDate(), p.getStatus()
+            });
+            if ("APPROVED".equalsIgnoreCase(p.getStatus())) totalSum += p.getAmount();
+        }
         lblTotalPaid.setText("Total Paid: $" + String.format("%.2f", totalSum));
     }
 
@@ -157,13 +133,17 @@ public class PaymentHistoryFrame extends JFrame {
             return;
         }
 
-        int paymentId = (int) model.getValueAt(selectedRow, 0);
-        String amountStr = (String) model.getValueAt(selectedRow, 1);
-        String method = (String) model.getValueAt(selectedRow, 2);
-        Object dateStr = model.getValueAt(selectedRow, 3);
+        int modelRow = table.convertRowIndexToModel(selectedRow);
+        int paymentId = (int) model.getValueAt(modelRow, 0);
+        String type = (String) model.getValueAt(modelRow, 1);
+        String amountStr = (String) model.getValueAt(modelRow, 2);
+        String method = (String) model.getValueAt(modelRow, 3);
+        String details = (String) model.getValueAt(modelRow, 4);
+        Object dateStr = model.getValueAt(modelRow, 5);
+        String status = (String) model.getValueAt(modelRow, 6);
 
         JDialog receiptDialog = new JDialog(this, "Transaction Receipt #" + paymentId, true);
-        receiptDialog.setSize(400, 360);
+        receiptDialog.setSize(420, 400);
         receiptDialog.setLocationRelativeTo(this);
 
         JPanel panel = UITheme.createCardPanel();
@@ -179,21 +159,24 @@ public class PaymentHistoryFrame extends JFrame {
         receiptText.setBackground(UITheme.BACKGROUND_COLOR);
         receiptText.setBorder(new EmptyBorder(10, 10, 10, 10));
 
-        receiptText.setText(
-                "=========================================\n" +
-                "           TRANSACTION RECEIPT\n" +
-                "=========================================\n" +
-                "Receipt ID    : #" + paymentId + "\n" +
-                "Date          : " + dateStr + "\n" +
-                "Student ID    : " + Session.getCurrentStudent().getStudentId() + "\n" +
-                "Student Name  : " + Session.getCurrentStudent().getName() + "\n" +
-                "Payment Method: " + method + "\n" +
-                "-----------------------------------------\n" +
-                "Amount Paid   : " + amountStr + "\n" +
-                "Status        : VERIFIED & COMPLETED\n" +
-                "=========================================\n" +
-                "       Official University Record"
-        );
+        StringBuilder sb = new StringBuilder();
+        sb.append("=========================================\n");
+        sb.append("           TRANSACTION RECEIPT\n");
+        sb.append("=========================================\n");
+        sb.append("Receipt ID    : #").append(paymentId).append("\n");
+        sb.append("Date          : ").append(dateStr).append("\n");
+        sb.append("Student ID    : ").append(Session.getCurrentStudent().getStudentId()).append("\n");
+        sb.append("Student Name  : ").append(Session.getCurrentStudent().getName()).append("\n");
+        sb.append("Payment Type  : ").append(type).append("\n");
+        if (!details.isEmpty()) sb.append("Details       : ").append(details).append("\n");
+        sb.append("Payment Method: ").append(method).append("\n");
+        sb.append("-----------------------------------------\n");
+        sb.append("Amount Paid   : ").append(amountStr).append("\n");
+        sb.append("Status        : ").append(status).append("\n");
+        sb.append("=========================================\n");
+        sb.append("       Official University Record");
+
+        receiptText.setText(sb.toString());
 
         JButton btnClose = UITheme.createPrimaryButton("Close");
         btnClose.addActionListener(e -> receiptDialog.dispose());

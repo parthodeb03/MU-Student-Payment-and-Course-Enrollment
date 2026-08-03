@@ -11,19 +11,18 @@ public class AdminLoginFrame extends JFrame {
 
     private JTextField txtUsername;
     private JPasswordField txtPassword;
+    private JCheckBox chkShowPassword;
 
     private JButton btnLogin;
-    private JButton btnRegister;
     private JButton btnBack;
 
     private AdminService adminService;
 
     public AdminLoginFrame() {
-
         adminService = new AdminService();
 
         setTitle("Admin Portal");
-        setSize(520, 380);
+        setSize(520, 400);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
@@ -47,35 +46,37 @@ public class AdminLoginFrame extends JFrame {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.anchor = GridBagConstraints.WEST;
 
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.gridwidth = 2;
+        gbc.gridx = 0; gbc.gridy = 0; gbc.gridwidth = 2;
         formCard.add(UITheme.createLabel("Admin Login", UITheme.SUBHEADER_FONT, UITheme.TEXT_DARK), gbc);
 
-        gbc.gridy++;
-        gbc.gridwidth = 1;
+        gbc.gridy++; gbc.gridwidth = 1;
         formCard.add(UITheme.createLabel("Username:"), gbc);
         gbc.gridx = 1;
         txtUsername = UITheme.createTextField(20);
         formCard.add(txtUsername, gbc);
 
-        gbc.gridx = 0;
-        gbc.gridy++;
+        gbc.gridx = 0; gbc.gridy++;
         formCard.add(UITheme.createLabel("Password:"), gbc);
         gbc.gridx = 1;
         txtPassword = UITheme.createPasswordField(20);
         formCard.add(txtPassword, gbc);
 
-        gbc.gridx = 0;
-        gbc.gridy++;
-        gbc.gridwidth = 2;
-        JPanel buttonRow = new JPanel(new GridLayout(1, 3, 12, 0));
+        gbc.gridx = 1; gbc.gridy++;
+        chkShowPassword = new JCheckBox("Show Password");
+        chkShowPassword.setFont(UITheme.SMALL_FONT);
+        chkShowPassword.setBackground(UITheme.SURFACE_COLOR);
+        chkShowPassword.setForeground(UITheme.TEXT_MUTED);
+        chkShowPassword.addActionListener(e -> {
+            txtPassword.setEchoChar(chkShowPassword.isSelected() ? (char) 0 : '•');
+        });
+        formCard.add(chkShowPassword, gbc);
+
+        gbc.gridx = 0; gbc.gridy++; gbc.gridwidth = 2;
+        JPanel buttonRow = new JPanel(new GridLayout(1, 2, 12, 0));
         buttonRow.setOpaque(false);
         btnLogin = UITheme.createPrimaryButton("Login");
-        btnRegister = UITheme.createOutlineButton("Register");
         btnBack = UITheme.createOutlineButton("Back");
         buttonRow.add(btnLogin);
-        buttonRow.add(btnRegister);
         buttonRow.add(btnBack);
         formCard.add(buttonRow, gbc);
 
@@ -83,69 +84,31 @@ public class AdminLoginFrame extends JFrame {
         contentPanel.add(formCard, BorderLayout.CENTER);
 
         btnLogin.addActionListener(e -> login());
-        btnRegister.addActionListener(e -> {
-            new AdminRegistrationFrame();
-            dispose();
-        });
-        btnBack.addActionListener(e -> {
-            new LoginFrame();
-            dispose();
-        });
+        btnBack.addActionListener(e -> { new LoginFrame(); dispose(); });
 
         setVisible(true);
-
     }
 
-    private void login(){
+    private void login() {
+        try {
+            String username = txtUsername.getText().trim();
+            String password = String.valueOf(txtPassword.getPassword());
 
-        try{
-
-            String username=txtUsername.getText();
-
-            String password=
-                    String.valueOf(txtPassword.getPassword());
-
-            Admin admin=
-                    adminService.login(username,password);
-
-            if(admin!=null){
-
-                JOptionPane.showMessageDialog(
-
-                        this,
-
-                        "Admin Login Successful."
-
-                );
-
-                new AdminDashboardFrame();
-
-                dispose();
-
-            }else{
-
-                JOptionPane.showMessageDialog(
-
-                        this,
-
-                        "Invalid Username or Password."
-
-                );
-
+            if (username.isEmpty() || password.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Please enter both username and password.", "Missing Information", JOptionPane.WARNING_MESSAGE);
+                return;
             }
 
-        }catch(Exception ex){
-
-            JOptionPane.showMessageDialog(
-
-                    this,
-
-                    ex.getMessage()
-
-            );
-
+            Admin admin = adminService.login(username, password);
+            if (admin != null) {
+                JOptionPane.showMessageDialog(this, "Admin Login Successful.", "Welcome", JOptionPane.INFORMATION_MESSAGE);
+                new AdminDashboardFrame();
+                dispose();
+            } else {
+                JOptionPane.showMessageDialog(this, "Invalid Username or Password.", "Login Failed", JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
-
     }
-
 }

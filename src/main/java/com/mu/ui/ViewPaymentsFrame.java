@@ -28,7 +28,7 @@ public class ViewPaymentsFrame extends JFrame {
         adminService = new AdminService();
 
         setTitle("Payment Records");
-        setSize(800, 500);
+        setSize(950, 540);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
@@ -37,45 +37,37 @@ public class ViewPaymentsFrame extends JFrame {
         mainPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
         setContentPane(mainPanel);
 
-        // Header
         JPanel topPanel = UITheme.createCardPanel();
         topPanel.setLayout(new BorderLayout(10, 10));
-
         JLabel lblTitle = new JLabel("All Payment Transactions");
         lblTitle.setFont(UITheme.TITLE_FONT);
         lblTitle.setForeground(UITheme.PRIMARY_COLOR);
-
         JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         searchPanel.setOpaque(false);
-
         JLabel lblSearch = new JLabel("Search Payments: ");
         lblSearch.setFont(UITheme.BODY_BOLD);
         txtSearch = UITheme.createTextField(16);
-
         searchPanel.add(lblSearch);
         searchPanel.add(txtSearch);
-
         topPanel.add(lblTitle, BorderLayout.WEST);
         topPanel.add(searchPanel, BorderLayout.EAST);
-
         mainPanel.add(topPanel, BorderLayout.NORTH);
 
-        // Table
         model = new DefaultTableModel() {
             @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
+            public boolean isCellEditable(int row, int column) { return false; }
         };
         model.addColumn("Payment ID");
         model.addColumn("Student ID");
+        model.addColumn("Type");
         model.addColumn("Amount");
-        model.addColumn("Payment Method");
-        model.addColumn("Payment Date");
+        model.addColumn("Method");
+        model.addColumn("Details");
+        model.addColumn("Date");
+        model.addColumn("Status");
 
         table = new JTable(model);
         UITheme.styleTable(table);
-
         sorter = new TableRowSorter<>(model);
         table.setRowSorter(sorter);
 
@@ -83,47 +75,29 @@ public class ViewPaymentsFrame extends JFrame {
         scrollPane.setBorder(BorderFactory.createEmptyBorder());
         mainPanel.add(scrollPane, BorderLayout.CENTER);
 
-        // Footer
         JPanel footerPanel = new JPanel(new BorderLayout());
         footerPanel.setBackground(UITheme.BACKGROUND_COLOR);
-
-        lblTotalRevenue = new JLabel("Total Revenue: $0.00");
+        lblTotalRevenue = new JLabel("Total Approved Revenue: $0.00");
         lblTotalRevenue.setFont(UITheme.HEADER_FONT);
         lblTotalRevenue.setForeground(UITheme.SUCCESS_COLOR);
-
         btnBack = UITheme.createOutlineButton("Back to Dashboard");
-
         footerPanel.add(lblTotalRevenue, BorderLayout.WEST);
         footerPanel.add(btnBack, BorderLayout.EAST);
-
         mainPanel.add(footerPanel, BorderLayout.SOUTH);
 
         loadPayments();
 
-        // Search Listener
         txtSearch.getDocument().addDocumentListener(new DocumentListener() {
-            @Override
-            public void insertUpdate(DocumentEvent e) { filter(); }
-            @Override
-            public void removeUpdate(DocumentEvent e) { filter(); }
-            @Override
-            public void changedUpdate(DocumentEvent e) { filter(); }
-
+            @Override public void insertUpdate(DocumentEvent e) { filter(); }
+            @Override public void removeUpdate(DocumentEvent e) { filter(); }
+            @Override public void changedUpdate(DocumentEvent e) { filter(); }
             private void filter() {
                 String text = txtSearch.getText().trim();
-                if (text.isEmpty()) {
-                    sorter.setRowFilter(null);
-                } else {
-                    sorter.setRowFilter(RowFilter.regexFilter("(?i)" + text));
-                }
+                sorter.setRowFilter(text.isEmpty() ? null : RowFilter.regexFilter("(?i)" + text));
             }
         });
 
-        btnBack.addActionListener(e -> {
-            new AdminDashboardFrame();
-            dispose();
-        });
-
+        btnBack.addActionListener(e -> { new AdminDashboardFrame(); dispose(); });
         setVisible(true);
     }
 
@@ -133,16 +107,22 @@ public class ViewPaymentsFrame extends JFrame {
         List<Payment> payments = adminService.getAllPayments();
 
         for (Payment payment : payments) {
+            String details = "";
+            if (payment.getMonth() != null && !payment.getMonth().isEmpty()) details = payment.getMonth() + " " + payment.getYear();
+            else if (payment.getTermName() != null && !payment.getTermName().isEmpty()) details = payment.getTermName();
+
             model.addRow(new Object[]{
                     payment.getPaymentId(),
                     payment.getStudentId(),
+                    payment.getPaymentType(),
                     "$" + String.format("%.2f", payment.getAmount()),
                     payment.getPaymentMethod(),
-                    payment.getPaymentDate()
+                    details,
+                    payment.getPaymentDate(),
+                    payment.getStatus()
             });
-            totalSum += payment.getAmount();
+            if ("APPROVED".equalsIgnoreCase(payment.getStatus())) totalSum += payment.getAmount();
         }
-
-        lblTotalRevenue.setText("Total Revenue: $" + String.format("%.2f", totalSum));
+        lblTotalRevenue.setText("Total Approved Revenue: $" + String.format("%.2f", totalSum));
     }
 }

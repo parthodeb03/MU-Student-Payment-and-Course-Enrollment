@@ -8,12 +8,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EnrollmentDAO {
-    public boolean enrollCourse(int studentId, int courseId) {
+    public boolean enrollCourse(String studentId, int courseId) {
         if (isAlreadyEnrolled(studentId, courseId)) {
             return false;
         }
 
-        if (countEnrolledCourses(studentId) >= 3) {
+        if (countEnrolledCourses(studentId) >= 6) {
             return false;
         }
 
@@ -21,7 +21,7 @@ public class EnrollmentDAO {
 
         try (PreparedStatement ps = DBConnection.getInstance().getConnection().prepareStatement(sql)) {
 
-            ps.setInt(1, studentId);
+            ps.setString(1, studentId);
             ps.setInt(2, courseId);
 
             return ps.executeUpdate() > 0;
@@ -32,13 +32,13 @@ public class EnrollmentDAO {
 
         return false;
     }
-    public boolean isAlreadyEnrolled(int studentId, int courseId) {
+    public boolean isAlreadyEnrolled(String studentId, int courseId) {
 
         String sql = "SELECT * FROM enrollments WHERE student_id=? AND course_id=?";
 
         try (PreparedStatement ps = DBConnection.getInstance().getConnection().prepareStatement(sql)) {
 
-            ps.setInt(1, studentId);
+            ps.setString(1, studentId);
             ps.setInt(2, courseId);
 
             ResultSet rs = ps.executeQuery();
@@ -52,13 +52,13 @@ public class EnrollmentDAO {
         return false;
     }
 
-    public int countEnrolledCourses(int studentId) {
+    public int countEnrolledCourses(String studentId) {
 
         String sql = "SELECT COUNT(*) FROM enrollments WHERE student_id=?";
 
         try (PreparedStatement ps = DBConnection.getInstance().getConnection().prepareStatement(sql)) {
 
-            ps.setInt(1, studentId);
+            ps.setString(1, studentId);
 
             ResultSet rs = ps.executeQuery();
 
@@ -72,7 +72,7 @@ public class EnrollmentDAO {
 
         return 0;
     }
-    public List<Course> getEnrolledCourses(int studentId) {
+    public List<Course> getEnrolledCourses(String studentId) {
 
         List<Course> courses = new ArrayList<>();
 
@@ -89,7 +89,7 @@ public class EnrollmentDAO {
 
         try (PreparedStatement ps = DBConnection.getInstance().getConnection().prepareStatement(sql)) {
 
-            ps.setInt(1, studentId);
+            ps.setString(1, studentId);
 
             ResultSet rs = ps.executeQuery();
 
@@ -109,14 +109,14 @@ public class EnrollmentDAO {
 
         return courses;
     }
-    public boolean dropCourse(int studentId, int courseId) {
+    public boolean dropCourse(String studentId, int courseId) {
 
         String sql =
                 "DELETE FROM enrollments WHERE student_id=? AND course_id=?";
 
         try (PreparedStatement ps = DBConnection.getInstance().getConnection().prepareStatement(sql)) {
 
-            ps.setInt(1, studentId);
+            ps.setString(1, studentId);
             ps.setInt(2, courseId);
 
             return ps.executeUpdate() > 0;

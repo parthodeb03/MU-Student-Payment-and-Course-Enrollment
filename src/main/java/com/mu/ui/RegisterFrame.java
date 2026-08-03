@@ -6,12 +6,18 @@ import com.mu.ui.theme.UITheme;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.List;
 
 public class RegisterFrame extends JFrame {
 
     private JTextField txtName;
+    private JComboBox<String> cmbDepartment;
+    private JTextField txtBatch;
+    private JTextField txtStudentID;
     private JTextField txtEmail;
+    private JTextField txtPhone;
     private JPasswordField txtPassword;
+    private JCheckBox chkShowPassword;
 
     private JButton btnRegister;
     private JButton btnBack;
@@ -22,7 +28,7 @@ public class RegisterFrame extends JFrame {
         registrationService = new RegistrationService();
 
         setTitle("Student Registration");
-        setSize(520, 420);
+        setSize(560, 600);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
@@ -32,7 +38,7 @@ public class RegisterFrame extends JFrame {
         setContentPane(contentPanel);
 
         JLabel lblTitle = UITheme.createLabel("Create Your Student Account", UITheme.HEADER_FONT, UITheme.PRIMARY_COLOR);
-        JLabel lblSubtitle = UITheme.createLabel("Simple registration in just a few steps", UITheme.BODY_FONT, UITheme.TEXT_MUTED);
+        JLabel lblSubtitle = UITheme.createLabel("Complete all fields to register", UITheme.BODY_FONT, UITheme.TEXT_MUTED);
 
         JPanel header = new JPanel(new GridLayout(2, 1, 0, 6));
         header.setOpaque(false);
@@ -42,39 +48,69 @@ public class RegisterFrame extends JFrame {
         JPanel formCard = UITheme.createCardPanel();
         formCard.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(12, 12, 12, 12);
+        gbc.insets = new Insets(10, 12, 10, 12);
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.anchor = GridBagConstraints.WEST;
 
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.gridwidth = 2;
+        gbc.gridx = 0; gbc.gridy = 0; gbc.gridwidth = 2;
         formCard.add(UITheme.createLabel("Student Registration", UITheme.SUBHEADER_FONT, UITheme.TEXT_DARK), gbc);
 
-        gbc.gridy++;
-        gbc.gridwidth = 1;
+        gbc.gridy++; gbc.gridwidth = 1;
         formCard.add(UITheme.createLabel("Full Name:"), gbc);
         gbc.gridx = 1;
         txtName = UITheme.createTextField(20);
         formCard.add(txtName, gbc);
 
-        gbc.gridx = 0;
-        gbc.gridy++;
+        gbc.gridx = 0; gbc.gridy++;
+        formCard.add(UITheme.createLabel("Department:"), gbc);
+        gbc.gridx = 1;
+        cmbDepartment = new JComboBox<>();
+        cmbDepartment.setFont(UITheme.BODY_FONT);
+        cmbDepartment.setBackground(UITheme.SURFACE_COLOR);
+        loadDepartments();
+        formCard.add(cmbDepartment, gbc);
+
+        gbc.gridx = 0; gbc.gridy++;
+        formCard.add(UITheme.createLabel("Batch:"), gbc);
+        gbc.gridx = 1;
+        txtBatch = UITheme.createTextField(20);
+        formCard.add(txtBatch, gbc);
+
+        gbc.gridx = 0; gbc.gridy++;
+        formCard.add(UITheme.createLabel("Student ID:"), gbc);
+        gbc.gridx = 1;
+        txtStudentID = UITheme.createTextField(20);
+        formCard.add(txtStudentID, gbc);
+
+        gbc.gridx = 0; gbc.gridy++;
         formCard.add(UITheme.createLabel("Email Address:"), gbc);
         gbc.gridx = 1;
         txtEmail = UITheme.createTextField(20);
         formCard.add(txtEmail, gbc);
 
-        gbc.gridx = 0;
-        gbc.gridy++;
+        gbc.gridx = 0; gbc.gridy++;
+        formCard.add(UITheme.createLabel("Phone Number:"), gbc);
+        gbc.gridx = 1;
+        txtPhone = UITheme.createTextField(20);
+        formCard.add(txtPhone, gbc);
+
+        gbc.gridx = 0; gbc.gridy++;
         formCard.add(UITheme.createLabel("Password:"), gbc);
         gbc.gridx = 1;
         txtPassword = UITheme.createPasswordField(20);
         formCard.add(txtPassword, gbc);
 
-        gbc.gridx = 0;
-        gbc.gridy++;
-        gbc.gridwidth = 2;
+        gbc.gridx = 1; gbc.gridy++;
+        chkShowPassword = new JCheckBox("Show Password");
+        chkShowPassword.setFont(UITheme.SMALL_FONT);
+        chkShowPassword.setBackground(UITheme.SURFACE_COLOR);
+        chkShowPassword.setForeground(UITheme.TEXT_MUTED);
+        chkShowPassword.addActionListener(e -> {
+            txtPassword.setEchoChar(chkShowPassword.isSelected() ? (char) 0 : '•');
+        });
+        formCard.add(chkShowPassword, gbc);
+
+        gbc.gridx = 0; gbc.gridy++; gbc.gridwidth = 2;
         JPanel actions = new JPanel(new GridLayout(1, 2, 12, 0));
         actions.setOpaque(false);
         btnRegister = UITheme.createPrimaryButton("Register");
@@ -90,19 +126,28 @@ public class RegisterFrame extends JFrame {
         contentPanel.add(formCard, BorderLayout.CENTER);
 
         btnRegister.addActionListener(e -> registerStudent());
-        btnBack.addActionListener(e -> {
-            new LoginFrame();
-            dispose();
-        });
+        btnBack.addActionListener(e -> { new LoginFrame(); dispose(); });
 
         setVisible(true);
+    }
+
+    private void loadDepartments() {
+        com.mu.dao.StudentDAO studentDAO = com.mu.factory.DAOFactory.createStudentDAO();
+        List<String> departments = studentDAO.getAllDepartments();
+        cmbDepartment.removeAllItems();
+        cmbDepartment.addItem("-- Select Department --");
+        for (String dept : departments) cmbDepartment.addItem(dept);
     }
 
     private void registerStudent() {
         try {
             Student student = new Student();
             student.setName(txtName.getText().trim());
+            student.setDepartment(cmbDepartment.getSelectedIndex() > 0 ? cmbDepartment.getSelectedItem().toString() : "");
+            student.setBatch(txtBatch.getText().trim());
+            student.setStudentId(txtStudentID.getText().trim());
             student.setEmail(txtEmail.getText().trim());
+            student.setPhone(txtPhone.getText().trim());
             student.setPassword(String.valueOf(txtPassword.getPassword()));
 
             boolean success = registrationService.register(student);

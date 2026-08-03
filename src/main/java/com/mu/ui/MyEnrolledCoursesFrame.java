@@ -95,7 +95,7 @@ public class MyEnrolledCoursesFrame extends JFrame {
         model.setRowCount(0);
         int totalCredits = 0;
 
-        int studentId = Session.getCurrentStudent().getStudentId();
+        String studentId = Session.getCurrentStudent().getStudentId();
         List<Course> courses = enrollmentService.getEnrolledCourses(studentId);
 
         for (Course course : courses) {
@@ -129,7 +129,7 @@ public class MyEnrolledCoursesFrame extends JFrame {
         );
 
         if (confirm == JOptionPane.YES_OPTION) {
-            int studentId = Session.getCurrentStudent().getStudentId();
+            String studentId = Session.getCurrentStudent().getStudentId();
             boolean success = enrollmentService.dropCourse(studentId, courseId);
 
             if (success) {

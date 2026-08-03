@@ -28,7 +28,7 @@ public class ViewStudentsFrame extends JFrame {
         adminService = new AdminService();
 
         setTitle("Registered Students");
-        setSize(750, 480);
+        setSize(950, 540);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
@@ -70,6 +70,10 @@ public class ViewStudentsFrame extends JFrame {
         model.addColumn("Student ID");
         model.addColumn("Full Name");
         model.addColumn("Email Address");
+        model.addColumn("Department");
+        model.addColumn("Batch");
+        model.addColumn("University ID");
+        model.addColumn("Phone");
 
         table = new JTable(model);
         UITheme.styleTable(table);
@@ -132,7 +136,10 @@ public class ViewStudentsFrame extends JFrame {
             model.addRow(new Object[]{
                     student.getStudentId(),
                     student.getName(),
-                    student.getEmail()
+                    student.getEmail(),
+                    student.getDepartment(),
+                    student.getBatch(),
+                    student.getPhone()
             });
         }
         lblTotalCount.setText("Total Registered Students: " + students.size());
